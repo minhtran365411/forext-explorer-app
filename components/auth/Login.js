@@ -1,0 +1,56 @@
+import React, { Component } from 'react'
+import {View, Button, TextInput } from 'react-native';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
+export class LoginScreen extends Component {
+    constructor(props) {
+        super(props);
+        //choose when to run this
+        this.state = {
+            email: '',
+            password: ''
+        }
+
+        //for signUp function to read this vars
+        this.onSignIn = this.onSignIn.bind(this)
+    }
+
+    //function when btn clicked
+    onSignIn() {
+        const {email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((result) => {
+            console.log(result)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+  render() {
+    return (
+      <View>
+
+        <TextInput 
+            placeholder='Email'
+            onChangeText={(email) => this.setState({ email })}
+        />
+
+        <TextInput 
+            placeholder='Password'
+            secureTextEntry={true}
+            onChangeText={(password) => this.setState({ password })}
+        />
+
+        <Button 
+            onPress={() => this.onSignIn()}
+            title='Sign In'
+        />
+
+      </View>
+    )
+  }
+}
+
+export default LoginScreen
