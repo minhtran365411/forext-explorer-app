@@ -24,7 +24,8 @@ function SubGoalList (props) {
         <View style={styles.taskBtn}>
           <View>
             <Text style={done == true ? [styles.text, styles.crossedText] : styles.text}>
-                {props.data.subGoal}
+            {/* //get subGoals */}
+                {props.data.subGoal} 
             </Text>
           </View>
           
