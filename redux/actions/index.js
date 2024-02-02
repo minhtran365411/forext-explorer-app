@@ -1,10 +1,18 @@
-import firebase from "firebase/compat";
+//import firebase from "firebase/compat";
+import firebase from 'firebase/compat/app';
 import 'firebase/storage';
 require('firebase/firestore')
 require('firebase/storage')
 
-import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE, USERS_DATA_STATE_CHANGE, USERS_POSTS_STATE_CHANGE } from "../constants/index";
+import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE, USERS_DATA_STATE_CHANGE, USERS_POSTS_STATE_CHANGE, CLEAR_DATA, USERS_LIKES_STATE_CHANGE } from "../constants/index";
 import { onSnapshot } from "firebase/firestore";
+
+export function clearData() {
+    //clear previous user info
+    return((dispatch) => {
+        dispatch({type: CLEAR_DATA})
+    })
+}
 
 export function fetchUser() {
     //frontend calls to trigger callback database data
@@ -67,7 +75,7 @@ export function fetchUserFollowing() {
             for (let i = 0; i < following.length; i++) {
                 let testUid = '2jpQA1jgGZfMMq6XWliM59UwNS53';
                 console.log('-----'+fetchUsersData(following[i]));
-                dispatch(fetchUsersData(following[i]));
+                dispatch(fetchUsersData(following[i], true));
             }
         })
     })
@@ -75,7 +83,7 @@ export function fetchUserFollowing() {
 
 //feed update
 
-export function fetchUsersData(uid) { 
+export function fetchUsersData(uid, getPosts) { 
     //this is to update post
     return((dispatch, getState) => {
         //some returns true false
@@ -96,13 +104,16 @@ export function fetchUsersData(uid) {
                     console.log('user uid: '+ user.uid)
 
                     dispatch({type: USERS_DATA_STATE_CHANGE, user: user});
-                    dispatch(fetchUsersFollowingPosts(user.uid))
+                    
                     
                 } else {
                     //if there is no data returned
                     console.log('does not exist')
                 }
             })
+            if (getPosts) {
+                dispatch(fetchUsersFollowingPosts(uid))
+            }
         }
     })
 }
@@ -128,9 +139,37 @@ export function fetchUsersFollowingPosts(uid) {
                 const id = doc.id;
                 return {id, ...data, user}
             })
-            console.log('My posts-----'+posts)
+            //console.log('My posts-----'+posts)
+            for(let i = 0; i< posts.length; i++) {
+                dispatch(fetchUsersFollowingLikes(uid, posts[i].id))
+            }
             dispatch({type: USERS_POSTS_STATE_CHANGE, posts, uid})
             //console.log(getState())
+        })
+    })
+}
+
+
+export function fetchUsersFollowingLikes(uid, postId) {
+    //frontend calls to trigger callback database data
+    return((dispatch, getState) => {
+        firebase.firestore().collection("posts")
+        .doc(uid)
+        .collection('userPosts')
+        .doc(postId)
+        .collection('likes')
+        .doc(firebase.auth().currentUser.uid)
+        .onSnapshot((snapshot) => {
+            
+            const postId = snapshot.id;
+
+            let currentUserLike = false;
+            if(snapshot.exists) {
+                currentUserLike = true;
+            }
+
+            dispatch({type: USERS_LIKES_STATE_CHANGE, postId, currentUserLike})
+            
         })
     })
 }

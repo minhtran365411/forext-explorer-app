@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
-import firebase from "firebase/compat";
+//import firebase from "firebase/compat";
+import firebase from 'firebase/compat/app';
 import 'firebase/storage';
 require('firebase/firestore')
 require('firebase/storage')
@@ -93,6 +94,11 @@ function ProfileScreen(props) {
     .delete({})
   }
 
+  const onLogout = () => {
+    //sign out
+    firebase.auth().signOut();
+  }
+
   //prevent error
   if(user === null) {
     return <View></View>
@@ -123,7 +129,13 @@ function ProfileScreen(props) {
               </TouchableOpacity>
             )}
           </View>
-        ) : null }
+        ) : <TouchableOpacity 
+              onPress={() => onLogout()} 
+              style={styles.btnFollow}
+              title="Log Out" >
+                <Text style={styles.followText}>Log Out</Text>
+            </TouchableOpacity> 
+            }
 
       </View>
 

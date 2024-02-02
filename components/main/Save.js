@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import {View, TextInput, Image, Button} from 'react-native'
-import firebase from 'firebase/compat'
+
+//import firebase from 'firebase/compat'
+import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/storage';
 import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL  } from "firebase/storage";
