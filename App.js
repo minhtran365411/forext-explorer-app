@@ -19,6 +19,7 @@ import thunk from 'redux-thunk'
 
 const store = createStore(Reducers, applyMiddleware(thunk))
 
+//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 API
 
 //should be in environment for security purposes
 const firebaseConfig = {

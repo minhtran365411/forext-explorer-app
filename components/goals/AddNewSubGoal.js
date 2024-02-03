@@ -1,6 +1,10 @@
 import { Text, StyleSheet, View, Pressable, TextInput, SafeAreaView } from 'react-native'
 import React from 'react'
 import { useState } from 'react';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
+//called axios to implement AI
+import axios from 'axios';
 
 //import firebase
 //import firebase from 'firebase/compat'
@@ -13,8 +17,62 @@ require('firebase/storage')
 
 function AddNewSubGoal (props) {
 
+    //AI
+    const [response, setResponse] = useState('')
+    const fetchAIResponse = async () => {
+      const apiKey = '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'
+      const prompt = `Give me 3 specific sub-goal suggestions for my big goal ${props.userNewGoal} within ${daysInBetween} days in 3 bullet points, each bullet point have a maximum of 10 words`
+      
+      try {
+        const response = await axios.post(
+          'https://api.openai.com/v1/chat/completions',
+          {
+            model: 'gpt-3.5-turbo',
+            messages: [
+              { role: 'system', content: 'You are a helpful assistant.' },
+              { role: 'user', content: prompt },
+            ],
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+            },
+          }
+        );
+    
+        // Handle the response here
+        console.log(response.data.choices[0].message.content);
+        //setResponse(response.data.choices[0].message.content);
+        let splitResponse = response.data.choices[0].message.content.split("\n");
+        for (let i =0; i < splitResponse.length; i++) {
+            setSubGoal1(splitResponse[0]);
+            setSubGoal2(splitResponse[1]);
+            setSubGoal3(splitResponse[2]);
+        } 
+
+      } catch (error) {
+        console.error('Error sending chat request:', error);
+      }
+    }
+    //end AI
+
+    let finishDate = props.userEndDate;
+    let daysInBetween;
+
   //const [subGoals, setSubGoals] = useState([]);
-  
+  function calculateDateInBetween() {
+    var endDate = new Date(finishDate);
+    var today = new Date();
+    var oneDay = 24 * 60 * 60 * 1000;
+    let betweenDay = Math.round(Math.abs((today.getTime() - endDate.getTime())/ oneDay));
+
+    // let betweenDay = Math.ceil((endDate - today) / msDay);
+    daysInBetween = betweenDay;
+  }
+
+  calculateDateInBetween();
+
 
   const [subGoal1, setSubGoal1] = useState();
   const [subGoal2, setSubGoal2] = useState();
@@ -38,16 +96,17 @@ function AddNewSubGoal (props) {
     //conbineSubGoals();
     let tempoList = [];
     if(subGoal1) (
-      tempoList.push({subGoal: subGoal1, done: false})
+      tempoList.push({subGoal: subGoal1, done: false, streakCounter: 0})
     ) 
     if(subGoal2) (
-      tempoList.push({subGoal: subGoal2, done: false})
+      tempoList.push({subGoal: subGoal2, done: false, streakCounter: 0})
     )
     if(subGoal3) (
-      tempoList.push({subGoal: subGoal3, done: false})
+      tempoList.push({subGoal: subGoal3, done: false, streakCounter: 0})
     )
 
     console.log(tempoList);
+
 
     firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid)
     .collection('userGoals')
@@ -56,7 +115,10 @@ function AddNewSubGoal (props) {
         subGoals: [...tempoList],
         done: false,
         reward: 0,
-        creation: firebase.firestore.FieldValue.serverTimestamp()
+        creation: new Date().setHours(0,0,0,0), //firebase.firestore.FieldValue.serverTimestamp(),
+        userEndDate: props.userEndDate.setHours(0,0,0,0),
+        lastStampDate: new Date().setHours(0,0,0,0),
+        periodInDay: daysInBetween
     }).then((function() {
         setSubGoal1();
         setSubGoal2();
@@ -75,7 +137,20 @@ function AddNewSubGoal (props) {
       <View style={styles.titleContainer}>
           <Text style={styles.bigTitle}>It’s easier to achieve your goal when you turn it into feasible quests.</Text>
           <Text style={styles.subTitle}>Your goal is: {props.userNewGoal}</Text>
+          <Text style={styles.subTitle}>Duration: {daysInBetween} days</Text>
+
+          <Pressable style={{marginTop: 10}} onPress={fetchAIResponse}>
+          <View style={styles.aiButton}>
+              <Text style={{fontWeight: 'bold', color: '#3d0d0d'}}>Get AI suggestions</Text>
+              <MaterialCommunityIcons  name="magic-staff" color={'#f7f304'} size={30} />
+          </View>
+                
+          </Pressable>
+
       </View> 
+
+      
+      
 
       <View style={styles.inputContainer}>
           <TextInput 
@@ -136,11 +211,11 @@ const styles = StyleSheet.create({
     flex: 1
 },
 titleContainer: {
-    margin: '10%',
+    margin: '5%',
 },
 bigTitle: {
     fontFamily: 'TomeOfTheUnknown',
-    fontSize: 28,
+    fontSize: 24,
     color: '#BA3D1F',
     textAlign: 'center'
 },
@@ -198,5 +273,11 @@ buttonTitle: {
 },
 pressed: {
     opacity: 0.75
+},
+aiButton: {
+  flexDirection:'row',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  
 }
 })

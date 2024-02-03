@@ -1,12 +1,13 @@
-import { Text, StyleSheet, View, TouchableOpacity } from 'react-native'
+import { Text, StyleSheet, View, TouchableOpacity, SafeAreaView } from 'react-native'
 import React, { useEffect } from 'react'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useState } from 'react'
+import * as Progress from 'react-native-progress';
 
 function SubGoalList (props) {
 
-   
-    const [done, setDone]  = useState(props.data.done);
+  const [done, setDone]  = useState(props.data.done);
+  let currentPercentage = props.data.streakCounter / props.duration;
 
     function changeStatusHandler() {
         if (props.data.done == false) {
@@ -20,28 +21,56 @@ function SubGoalList (props) {
 
     //console.log(props.data)
     return (
-        <View style={styles.taskTab}>
+        <SafeAreaView style={styles.taskTab}>
+
         <View style={styles.taskBtn}>
-          <View>
-            <Text style={done == true ? [styles.text, styles.crossedText] : styles.text}>
-            {/* //get subGoals */}
-                {props.data.subGoal} 
-            </Text>
+              <View>
+
+                <View style={styles.textBox}>
+                  <View>
+                    <Text style={done == true ? [styles.text, styles.crossedText] : styles.text}>
+                    {/* //get subGoals */}
+                        {props.data.subGoal} 
+                    </Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.statusText}>{props.data.streakCounter}/{props.duration}</Text>
+                  </View>
+
+                </View>
+
+                <Progress.Bar progress={currentPercentage} width={250} color={'#D47B2B'}
+                animated={true}
+                style={styles.progressBar} 
+                />
+
+              </View>
+
+              {
+                (props.daysLeft == 0) ?
+                <View></View>
+                :
+                (
+                  (done ==  false) ?
+                  <View>
+                  <TouchableOpacity onPress={changeStatusHandler} >
+                    <MaterialCommunityIcons  name="checkbox-blank-circle-outline" color={'#4A8C72'} size={30} />
+                  </TouchableOpacity>
+                  </View>
+                    :
+                    <View>
+                    <TouchableOpacity onPress={changeStatusHandler} >
+                        <MaterialCommunityIcons  name="checkbox-marked-circle-outline" color={'#4A8C72'} size={30} />
+                    </TouchableOpacity>
+                    </View>
+                )
+              }
+              
+
           </View>
           
-          {done ==  false ?
-          <TouchableOpacity onPress={changeStatusHandler} >
-                <MaterialCommunityIcons  name="checkbox-blank-circle-outline" color={'#4A8C72'} size={30} />
-          </TouchableOpacity>
-            
-            :
-            <TouchableOpacity onPress={changeStatusHandler} >
-                <MaterialCommunityIcons  name="checkbox-marked-circle-outline" color={'#4A8C72'} size={30} />
-            </TouchableOpacity>
-            }
-          
-          </View>
-      </View>
+      </SafeAreaView>
     )
   
 }
@@ -54,6 +83,8 @@ const styles = StyleSheet.create({
         marginVertical: 6,
       },
       taskBtn:{
+        flex: 1,
+        // flexWrap: 'wrap',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -73,10 +104,25 @@ const styles = StyleSheet.create({
       text: {
         fontWeight: 'bold', 
         fontSize: 17, 
-        color: '#4A8C72' 
+        color: '#4A8C72',
+        width: 240
       },
       crossedText: {
         textDecorationLine: 'line-through',
         color: '#546b62' 
+      },
+      progressBar: {
+        marginVertical: 10,
+      },
+      textBox: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        
+      },
+      statusText: {
+        fontWeight: 'bold', 
+        fontSize: 14, 
+        color: '#D47B2B' 
       }
 })

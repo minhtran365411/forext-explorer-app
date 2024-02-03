@@ -70,11 +70,11 @@ export function fetchUserFollowing() {
                 const id = doc.id;
                 return id
             })
-            console.log('following'+following.length)
+            //console.log('following'+following.length)
             dispatch({type: USER_FOLLOWING_STATE_CHANGE, following});
             for (let i = 0; i < following.length; i++) {
                 let testUid = '2jpQA1jgGZfMMq6XWliM59UwNS53';
-                console.log('-----'+fetchUsersData(following[i]));
+                //console.log('-----'+fetchUsersData(following[i]));
                 dispatch(fetchUsersData(following[i], true));
             }
         })
@@ -97,11 +97,11 @@ export function fetchUsersData(uid, getPosts) {
             .doc(uid)
             .get()
             .then((snapshot) => {
-                console.log(snapshot.data())
+                //console.log(snapshot.data())
                 if(snapshot.exists) {
                     let user = snapshot.data();
                     user.uid = snapshot.id;
-                    console.log('user uid: '+ user.uid)
+                    //console.log('user uid: '+ user.uid)
 
                     dispatch({type: USERS_DATA_STATE_CHANGE, user: user});
                     

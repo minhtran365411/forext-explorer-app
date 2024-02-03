@@ -3,6 +3,11 @@ import React from 'react'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 function GoalListComponent (props) {
+
+  var endDate = props.data.userEndDate;
+  var lastStampDate = props.data.lastStampDate;
+  let daysLeft = (endDate - lastStampDate) / 86400000;
+
     
     return (
         <View style={styles.taskTab}>
@@ -12,7 +17,7 @@ function GoalListComponent (props) {
       >
           <View>
             <Text style={{fontWeight: 'bold', fontSize: 17, }}>{props.data.goal}</Text>
-            <Text style={{fontSize: 13, fontStyle: 'italic'}}>Sub Goals: {props.data.subGoals.length}</Text>
+            <Text style={{fontSize: 13, fontStyle: 'italic'}}>Sub Goals: {props.data.subGoals.length} | Days Left: {daysLeft} days.</Text>
           </View>
           <MaterialCommunityIcons  name="arrow-right-thick" color={'#4A8C72'} size={30} />
         </Pressable>

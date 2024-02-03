@@ -2,6 +2,7 @@ import {StyleSheet, ImageBackground, Text, Pressable, SafeAreaView, Image, View,
 import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useEffect } from 'react';
+import App from '../../App';
 
 import GoalListComponent from '../goals/GoalListComponent';
 import CompletedGoal from '../goals/CompletedGoal';
@@ -13,12 +14,17 @@ import 'firebase/storage';
 require('firebase/firestore')
 require('firebase/storage')
 
+
 function TodoHome (props) {
   const [userName, setUserName] = useState(null)
   const [selectedButton, setSelectedButton] = useState('progress')
   const [goalsList, setGoalsList] = useState([]);
+  const [completedGoalsList, setCompletedGoalsList] = useState([]);
+  let reward;
+  let today = new Date().setHours(0,0,0,0);
   
-  let renderList;
+  
+  //let renderList;
 
   useEffect(() => {
     var userRef = firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid);
@@ -42,17 +48,76 @@ function TodoHome (props) {
         //map seperated documents into little docs
         let posts = snapshot.docs.map(doc => {
             const data = doc.data();
-            //console.log(data)
+            
+            //read inprogress goals
+            if (data.done == false) {
+
+              if (data.lastStampDate == today) {
+                const id = doc.id;
+                return {id, ...data}
+              } else {
+                const id = doc.id;
+                let tempoList = data.subGoals;
+
+                for (i = 0; i < tempoList.length; i ++) {
+                  tempoList[i].done = false;
+                }
+
+                firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid)
+                .collection('userGoals').doc(id)
+                .update({
+                    "subGoals": tempoList,
+                    "lastStampDate": new Date().setHours(0,0,0,0),
+                }).then((function() {
+                    console.log('Success updating new timstamp')
+                    
+                    //get new data again
+                    
+                    userGoalsRef.orderBy('creation', 'desc')
+                    .get()
+                    .then((snapshot) => {
+                        //map seperated documents into little docs
+                        let posts = snapshot.docs.map(doc => {
+                            const data = doc.data();
+                            //console.log(data)
+                            const id = doc.id;
+                            return {id, ...data}
+                        })
+                        setGoalsList([...posts]); 
+                      })
+
+                }))
+
+              //}
+            
+          } 
+        }    
+        })
+
+        let completedPosts = snapshot.docs.filter((doc) => doc.data().done == true).map(doc => {
+          const data = doc.data();
+          // if (data.done == true) {
             const id = doc.id;
             return {id, ...data}
+          //} 
         })
+
+        for (let i = 0; i < completedPosts.length; i ++) {
+          reward += completedPosts[i].reward
+        }
+
+        //have another read for completed post
+
         setGoalsList([...posts]);
-        //console.log('My goal list'+goalsList)
+        if (completedPosts.length >= 1) {
+          setCompletedGoalsList([...completedPosts])
+        }
+        
+        //console.log('My goal list'+completedPosts)
     })
 
 
-
-  },[firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid).collection('userGoals')]);
+  },[goalsList, reward, completedGoalsList, userName]);
 
   function progressBtnHandler() {
     setSelectedButton('progress')
@@ -61,6 +126,9 @@ function TodoHome (props) {
   function completedBtnHandler() {
     setSelectedButton('completed')
   }
+
+  //sorted  the list
+
   
     return (
       <LinearGradient style={styles.rootView}
@@ -85,7 +153,15 @@ function TodoHome (props) {
                 />
               </View>
 
-              <Text style={styles.coins}>3000</Text>
+              <Text style={styles.coins}>
+                {
+                  reward ?
+                  {reward}
+                  : 
+                  0
+                }
+                
+              </Text>
 
             </View>
 
@@ -139,11 +215,17 @@ function TodoHome (props) {
               <Text style={styles.emptyText}>You have not log in any goals yet</Text>
             )
             :
-            <FlatList 
-              data={goalsList}
-              renderItem={({item}) => <CompletedGoal creation={item.creation} goal={item.goal} subGoals={item.subGoals} id={item.id} />}
-              keyExtractor={item => item.id}
-            />
+            (
+              (completedGoalsList.length >= 1) ?
+                <FlatList 
+                data={completedGoalsList}
+                renderItem={({item}) => <CompletedGoal creation={item.creation} goal={item.goal} subGoals={item.subGoals} id={item.id} />}
+                keyExtractor={item => item.id}
+                />
+              :
+              <Text style={styles.emptyText}>No completed goals right now.</Text>
+            )
+            
             }
 
 
@@ -174,7 +256,8 @@ const styles = StyleSheet.create({
       borderRadius: 25,
       backgroundColor: 'white',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
+      paddingLeft: 10,
       alignItems: 'center',
       width: '30%',
       height: 40,
@@ -193,7 +276,8 @@ const styles = StyleSheet.create({
     coins: {
       fontSize: 20,
       color:'#823324',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      textAlign: 'left'
     },
     avatarContainer: {
       borderRadius: 25,

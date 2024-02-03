@@ -10,24 +10,29 @@ import AddNewSubGoal from '../goals/AddNewSubGoal';
 function NewGoal (props) {
   const [userNewGoal, setUserNewGoal] = useState('');
   const [filledGoal, setFilledGoal] = useState(0);
+  const [ userEndDate, setUserEndDate] = useState(new Date());
 
   function clearInfo() {
     setUserNewGoal('');
+    setUserEndDate(new Date())
   }
 
   function goBack() {
     setFilledGoal(0);
   }
 
-  function newGoalButtonHanlder(value) {
-    setUserNewGoal(value);
+  function newGoalButtonHanlder(goal, date) {
+    // console.log(goal);
+    // console.log(date)
+    setUserNewGoal(goal);
+    setUserEndDate(date)
     setFilledGoal(1);
   }
 
-    let screen = <AddNewGoal onSubmitNewGoal={newGoalButtonHanlder} userNewGoal={userNewGoal} navigation={props.navigation} />
+    let screen = <AddNewGoal onSubmitNewGoal={newGoalButtonHanlder} userNewGoal={userNewGoal} userEndDate={userEndDate} navigation={props.navigation} />
 
     if(filledGoal === 1) {
-      screen = <AddNewSubGoal userNewGoal={userNewGoal} goBack={goBack} clearInfo={clearInfo} navigation={props.navigation} />
+      screen = <AddNewSubGoal userNewGoal={userNewGoal} userEndDate={userEndDate} goBack={goBack} clearInfo={clearInfo} navigation={props.navigation} />
     }
 
     return (

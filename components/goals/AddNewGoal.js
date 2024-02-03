@@ -1,11 +1,24 @@
-import { Text, StyleSheet, View, SafeAreaView, Pressable, TextInput, Alert } from 'react-native'
+import { Text, StyleSheet, View, SafeAreaView, Pressable, TextInput, Alert, TouchableWithoutFeedback, Keyboard  } from 'react-native'
 import React from 'react'
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useState, useEffect } from 'react';
 
 
-function AddNewGoal ({onSubmitNewGoal, userNewGoal}) {
+function AddNewGoal ({onSubmitNewGoal, userNewGoal, userEndDate}) {
     const [newGoal, setNewGoal] = useState('');
+    const [endDate, setEndDate] = useState(userEndDate);
+    const [show, setShow] = useState(false);
+
+    const onChange = (event, selectedDate) => {
+        const endDate = selectedDate;
+        setShow(false);
+        setEndDate(endDate);
+      };
+    
+    //   const showDatepicker = () => {
+    //     setShow(true);
+    //   };
 
     
     //called only once
@@ -27,11 +40,12 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal}) {
 
             return;
         }
-        onSubmitNewGoal(newGoal);
+        onSubmitNewGoal(newGoal, endDate);
         setNewGoal('');
     }
 
     return (
+        <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()} accessible={false}>
         <SafeAreaView style={styles.rootView}>
         
         <View style={styles.titleContainer}>
@@ -39,6 +53,7 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal}) {
             <Text style={styles.subTitle}>What do you want to achieve?</Text>
         </View> 
 
+        
         <View style={styles.inputContainer}>
             <TextInput 
                 multiline
@@ -49,6 +64,27 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal}) {
                 value={newGoal}
                 onChangeText={(value) => setNewGoal(value)}
             />
+        </View>
+        
+
+        <View style={styles.inputContainer}>
+            <Text style={styles.subTitle}>Pick an end date of the goal tracker</Text>
+            {/* <Button onPress={showDatepicker} title="Show date picker!" /> */}
+            
+            {/* {show && ( */}
+                <DateTimePicker
+                testID="datePicker"
+                value={endDate}
+                mode='date'
+                // is24Hour={true}
+                onChange={onChange}
+                display='default'
+                minimumDate={new Date()}
+                />
+            {/* )} */}
+
+            <Text>End Date: {endDate.toLocaleString()}</Text>
+            
         </View>
 
         <View style={styles.buttonContainer}>
@@ -62,6 +98,7 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal}) {
         </View>
 
         </SafeAreaView>
+        </TouchableWithoutFeedback>
           
     )
 }
