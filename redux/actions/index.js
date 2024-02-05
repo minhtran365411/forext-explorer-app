@@ -40,7 +40,7 @@ export function fetchUserPosts() {
         firebase.firestore().collection("posts")
         .doc(firebase.auth().currentUser.uid)
         .collection('userPosts')
-        .orderBy('creation', 'asc')
+        .orderBy('creation', 'desc')
         .get()
         .then((snapshot) => {
             //map seperated documents into little docs
@@ -128,7 +128,6 @@ export function fetchUsersFollowingPosts(uid) {
         .orderBy('creation', 'asc')
         .get()
         .then((snapshot) => {
-            console.log('new-----');
             const uid = snapshot.query._delegate._query.path.segments[1];
             const user = getState().usersState.users.find(el => el.uid === uid);
             

@@ -2,11 +2,10 @@ import {StyleSheet, ImageBackground, Text, Pressable, SafeAreaView, Image, View,
 import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useEffect } from 'react';
-import App from '../../App';
+import * as Progress from 'react-native-progress';
+
 
 import GoalListComponent from '../goals/GoalListComponent';
-import CompletedGoal from '../goals/CompletedGoal';
-
 
 //firesbase
 import firebase from 'firebase/compat/app';
@@ -19,17 +18,24 @@ function TodoHome (props) {
   const [userName, setUserName] = useState(null)
   const [selectedButton, setSelectedButton] = useState('progress')
   const [goalsList, setGoalsList] = useState([]);
-  const [completedGoalsList, setCompletedGoalsList] = useState([]);
-  let reward;
+  const [reward, setReward] = useState();
   let today = new Date().setHours(0,0,0,0);
-  
+  const [userDailyStreak, setUserDailyStreak] = useState(0)
+
+  // const [totalSubGoals, setTotalSubGoals] = useState()
+  //let percentage = 0;
+
   
   //let renderList;
 
   useEffect(() => {
+
     var userRef = firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid);
 
     userRef.get().then((doc) => {
+        setReward(doc.data().reward)
+        setUserDailyStreak(doc.data().dailyStreak)
+
         if (doc.data().name != '') {
           setUserName(doc.data().name)
         } else {
@@ -41,21 +47,21 @@ function TodoHome (props) {
     });
 
     var userGoalsRef = firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid).collection('userGoals');
-
-    userGoalsRef.orderBy('creation', 'desc')
+//.orderBy('reward').endAt(0)
+    userGoalsRef
     .get()
     .then((snapshot) => {
-        //map seperated documents into little docs
+        //map seperated documents into little docs filter((doc) => doc.data().done == false)
         let posts = snapshot.docs.map(doc => {
             const data = doc.data();
-            
-            //read inprogress goals
-            if (data.done == false) {
+            //console.log(data)
 
               if (data.lastStampDate == today) {
-                const id = doc.id;
-                return {id, ...data}
+                  const id = doc.id;
+                  return {id, ...data}
               } else {
+                setGoalsList([])
+
                 const id = doc.id;
                 let tempoList = data.subGoals;
 
@@ -70,6 +76,15 @@ function TodoHome (props) {
                     "lastStampDate": new Date().setHours(0,0,0,0),
                 }).then((function() {
                     console.log('Success updating new timstamp')
+
+                    //update in user dailystreak time stamp
+
+                    firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
+                    .update({
+                      "dailyStreak": 0
+                    }).then((function() {
+                        console.log('Success reset streak')
+                    }))
                     
                     //get new data again
                     
@@ -86,48 +101,59 @@ function TodoHome (props) {
                         setGoalsList([...posts]); 
                       })
 
+                      props.navigation.navigate("TodoHome")
+
                 }))
 
               //}
             
           } 
-        }    
+        //}    
         })
-
-        let completedPosts = snapshot.docs.filter((doc) => doc.data().done == true).map(doc => {
-          const data = doc.data();
-          // if (data.done == true) {
-            const id = doc.id;
-            return {id, ...data}
-          //} 
-        })
-
-        for (let i = 0; i < completedPosts.length; i ++) {
-          reward += completedPosts[i].reward
-        }
-
-        //have another read for completed post
 
         setGoalsList([...posts]);
-        if (completedPosts.length >= 1) {
-          setCompletedGoalsList([...completedPosts])
-        }
-        
-        //console.log('My goal list'+completedPosts)
+
+
     })
 
-
-  },[goalsList, reward, completedGoalsList, userName]);
+  },[goalsList, reward, userName]);
 
   function progressBtnHandler() {
     setSelectedButton('progress')
   }
 
+  // function calculatePercentageProgress() {
+  //   percentage = userDailyStreak / totalSubGoals;
+  // }
+
   function completedBtnHandler() {
-    setSelectedButton('completed')
+    setSelectedButton('overview')
+
+    // for (let i = 0; i < goalsList.length; i++) {
+    //   let temNumber = 0;
+    //   let temSubGoal = 0;
+    //   if (totalSubGoals) {
+    //     temSubGoal = totalSubGoals;
+    //   }
+    //   temNumber = goalsList[i].subGoals.length + 1 - 1;
+    //   temSubGoal = temSubGoal + temNumber;
+    //   setTotalSubGoals(temSubGoal)
+    // }
+
+    // console.log(totalSubGoals)
+
+    // calculatePercentageProgress();
+
   }
 
-  //sorted  the list
+  function returnStringForProgress(percentage) {
+    let num = Math.round(percentage * 100)
+    let string = num.toString();
+    let returnString = string + '%'
+    return returnString;
+  }
+
+
 
   
     return (
@@ -153,15 +179,15 @@ function TodoHome (props) {
                 />
               </View>
 
-              <Text style={styles.coins}>
+              <View>
                 {
                   reward ?
-                  {reward}
+                  <Text style={styles.coins}>{reward}</Text>
                   : 
-                  0
+                  <Text style={styles.coins}>0</Text>
                 }
                 
-              </Text>
+              </View>
 
             </View>
 
@@ -192,10 +218,10 @@ function TodoHome (props) {
             </View>
 
             <View style={styles.buttonContainer}>
-              <Pressable style={(selectedButton === 'completed') ? [styles.button, styles.selectedButton] : styles.button}
+              <Pressable style={(selectedButton === 'overview') ? [styles.button, styles.selectedButton] : styles.button}
                 onPress={completedBtnHandler}
               >
-                <Text style={ (selectedButton === 'completed') ? [styles.buttonText, styles.selectedText] : styles.buttonText }>Completed</Text>
+                <Text style={ (selectedButton === 'overview') ? [styles.buttonText, styles.selectedText] : styles.buttonText }>Overview</Text>
               </Pressable>
             </View>
 
@@ -215,16 +241,14 @@ function TodoHome (props) {
               <Text style={styles.emptyText}>You have not log in any goals yet</Text>
             )
             :
-            (
-              (completedGoalsList.length >= 1) ?
-                <FlatList 
-                data={completedGoalsList}
-                renderItem={({item}) => <CompletedGoal creation={item.creation} goal={item.goal} subGoals={item.subGoals} id={item.id} />}
-                keyExtractor={item => item.id}
-                />
-              :
-              <Text style={styles.emptyText}>No completed goals right now.</Text>
-            )
+              <View style={styles.dailyStreakContainer}>
+                <Text style={styles.emptyText}>Your daily streaks: {userDailyStreak} </Text>
+
+                <Progress.Circle color='#4A8C72' thickness={5}
+                progress={0.5} size={200} showsText={true} 
+                formatText={() => {return '50%'}} />
+
+              </View>
             
             }
 
@@ -332,6 +356,9 @@ const styles = StyleSheet.create({
       marginHorizontal: '6%',
       fontSize: 18,
       fontWeight: 'bold'
+    },
+    dailyStreakContainer: {
+      alignItems :'center'
     }
     
 })

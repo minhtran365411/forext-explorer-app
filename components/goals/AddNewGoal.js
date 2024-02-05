@@ -10,6 +10,10 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal, userEndDate}) {
     const [endDate, setEndDate] = useState(userEndDate);
     const [show, setShow] = useState(false);
 
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     const onChange = (event, selectedDate) => {
         const endDate = selectedDate;
         setShow(false);
@@ -79,11 +83,12 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal, userEndDate}) {
                 // is24Hour={true}
                 onChange={onChange}
                 display='default'
-                minimumDate={new Date()}
+                minimumDate={tomorrow}
                 />
             {/* )} */}
 
             <Text>End Date: {endDate.toLocaleString()}</Text>
+
             
         </View>
 

@@ -7,7 +7,9 @@ require('firebase/firestore')
 require('firebase/storage')
 import { collection, query, where } from "firebase/firestore";
 import { connect } from 'react-redux'
-import { Button } from 'react-native-paper';
+
+import ImageModal from '../smallComponents/ImageModel';
+
 
 function ProfileScreen(props) {
   const [userPost, setUserPosts] = useState([])
@@ -72,7 +74,7 @@ function ProfileScreen(props) {
   
     
 
-  }, [props.route.params.uid, props.following]) // this is called here because it is needed to be rerender
+  }, [props.route.params.uid, props.following, props.posts]) // this is called here because it is needed to be rerender
 
   //follow & unfollow
 
@@ -99,6 +101,17 @@ function ProfileScreen(props) {
     firebase.auth().signOut();
   }
 
+  const deletePost = (postID) => {
+    firebase.firestore().collection('posts').doc(props.route.params.uid)
+      .collection('userPosts').doc(postID)
+      .delete().then(() => {
+          console.log("Post is deleted!");
+          props.navigation.navigate("TodoHome");
+      }).catch((error) => {
+          console.error("Error removing document: ", error);
+      });
+  }
+
   //prevent error
   if(user === null) {
     return <View></View>
@@ -107,8 +120,8 @@ function ProfileScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.containerInfo}>
-        <Text>{user.name}</Text>
-        <Text>{user.email}</Text>
+        <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.email}>{user.email}</Text>
 
         {/* render follow button only if viewing other user's profile */}
         {props.route.params.uid !== firebase.auth().currentUser.uid ? (
@@ -144,14 +157,7 @@ function ProfileScreen(props) {
           numColumns={3}
           horizontal={false}
           data={userPost}
-          renderItem={({item}) => (
-            <View style={styles.containerImage}>
-            <Image 
-              source={{uri: item.downloadURL}}
-              style={styles.image}
-            />
-            </View>
-          )}
+          renderItem={({item}) => <ImageModal data={item} deletePost={deletePost} />}
         />
       </View>
         
@@ -170,35 +176,46 @@ export default connect(mapStateToProps, null)(ProfileScreen);
 const styles = StyleSheet.create({
   container: {
     flex:1,
-    marginTop: 40
+    backgroundColor: '#fff9f0'
   },
   containerInfo: {
-    margin: 10,
-    
+    marginHorizontal: 20,
+    marginTop: 30
+  },
+  name: {
+    fontSize: 25,
+    color: '#823324',
+    textAlign: 'left',
+    fontFamily: 'TomeOfTheUnknown',
   },
   containerGallery: {
     flex: 1,
   },
-  image: {
-    flex: 1,
-    aspectRatio: 1/1
-  },
-  containerImage: {
-    flex: 1/3
-  },
   btnFollow: {
     alignItems: 'center',
-    backgroundColor: '#BA3D20',
+    backgroundColor: '#D47B2B',
     padding: 10,
     marginTop:20,
-    marginBottom: 20
+    marginBottom: 40,
+    borderRadius: 25,
+    elevation: 2, //android only property
+    shadowColor: '#3d0d0d', //ios only
+    shadowOffset: {width: 2 ,height: 3},
+    shadowOpacity: 0.5,
+    shadowRadius: 2
   },
   btnUnfollow: {
     alignItems: 'center',
     backgroundColor: '#823324',
     padding: 10,
     marginTop:20,
-    marginBottom: 20
+    marginBottom: 40,
+    borderRadius: 25,
+    elevation: 2, //android only property
+    shadowColor: '#6d2b1e', //ios only
+    shadowOffset: {width: 2 ,height: 3},
+    shadowOpacity: 0.5,
+    shadowRadius: 2
   },
   followText: {
     color: '#fff',

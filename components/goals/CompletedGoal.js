@@ -2,7 +2,7 @@ import { Text, StyleSheet, View, Pressable } from 'react-native'
 import React from 'react'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-function CompletedGoal ({creation, goal, subGoals, id}) {
+function CompletedGoal (props) {
     
     return (
         <View style={styles.taskTab}>
@@ -11,8 +11,8 @@ function CompletedGoal ({creation, goal, subGoals, id}) {
         onPress={() =>{}}
       >
           <View>
-            <Text style={{fontWeight: 'bold', fontSize: 17, textDecorationLine: 'line-through', color: 'gray' }}>{goal}</Text>
-            <Text style={{fontSize: 13, fontStyle: 'italic'}}>Rewards:</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 17, textDecorationLine: 'line-through', color: 'gray' }}>{props.data.goal}</Text>
+            <Text style={{fontSize: 13, fontStyle: 'italic'}}>Rewards:{props.data.reward}</Text>
           </View>
           <MaterialCommunityIcons  name="check-circle-outline" color={'#4A8C72'} size={30} />
         </Pressable>

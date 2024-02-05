@@ -91,7 +91,12 @@ export default function App({navigation}) {
 
           <Button title='Take Picture' onPress={() => takePicture()}/>
           <Button title='Pick Image from Gallery' onPress={() => pickImageAsync()}/>
-          <Button title='Save' onPress={() => navigation.navigate('Save', {image})}/>
+          {image? 
+          <TouchableOpacity style={styles.saveBtn}  onPress={() => navigation.navigate('Save', {image})}>
+            <Text style={styles.saveText}>SAVE</Text>
+          </TouchableOpacity>
+          : null}
+
             {image && <Image source={{uri: image}} style={{flex:1}}/>}
   
     </View>
@@ -124,5 +129,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  saveBtn: {
+    backgroundColor: '#D47B2B',
+    padding: 10
+  },
+  saveText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 20
+  }
   
 });

@@ -20,17 +20,49 @@ function DetailGoal(props) {
     let reward = 0;
 
     function finishGoal() {
-        calculateRewards();
+        // firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid)
+        // .collection('userGoals').doc(props.route.params.goalData.id)
+        // .update({
+        //     "done": true,
+        //     "reward": reward
+        // }).then((function() {
+        //     console.log('Success marking goal as completed')
+        //     props.navigation.navigate("TodoHome");
+        // }))
 
-        firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid)
-        .collection('userGoals').doc(props.route.params.goalData.id)
-        .update({
-            "done": true,
-            "reward": reward
-        }).then((function() {
-            console.log('Success marking goal as completed')
-            props.navigation.navigate("TodoHome");
-        }))
+        firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+        .get().then((doc) => {
+            if (doc.exists) {
+                let currentUserReward = doc.data().reward;
+                reward = currentUserReward + reward;
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+            
+            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+            .update({
+                "reward": reward
+            }).then((function() {
+                console.log('Success marking goal as completed & increase reward')
+
+                //delete the goal
+                firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid)
+                        .collection('userGoals').doc(props.route.params.goalData.id)
+                        .delete().then(() => {
+                            console.log("Document successfully marked completed and deleted!");
+                            props.navigation.navigate("TodoHome");
+                        }).catch((error) => {
+                            console.error("Error removing document: ", error);
+                        });
+
+            }))
+
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+
+        
 
         //will seperate the reward system into user collection once unity has the function
     }
@@ -61,8 +93,12 @@ function DetailGoal(props) {
         var endDate = props.route.params.goalData.userEndDate;
         var lastStampDate = props.route.params.goalData.lastStampDate;
         let betweenDays = (endDate - lastStampDate) / 86400000;
-
-        daysLeft = betweenDays;
+        if (betweenDays <= 0) {
+            daysLeft = 0;
+        } else {
+            daysLeft = betweenDays;
+        }
+        
     }
 
     calculateDaysLeft();
@@ -103,8 +139,9 @@ function DetailGoal(props) {
         .update({
             "subGoals": subGoalsList
         }).then((function() {
-            console.log('Success overwriting')
-        }))
+            console.log('Success overwriting');
+         }))
+
 
     }
 
@@ -121,6 +158,10 @@ function DetailGoal(props) {
         }
     }
 
+    if (daysLeft == 0) {
+        calculateRewards();
+    }
+    
 
     return (
         <SafeAreaView style={styles.rootView}>
@@ -159,8 +200,9 @@ function DetailGoal(props) {
         </View>
 
         {
-            (daysLeft === 0) ?
+            (daysLeft == 0) ?
                 <View style={styles.finishBtnContainer}>
+                <Text style={styles.subTitle}>Reward: {reward} coins.</Text>
                 <Pressable 
                     style={({pressed}) => pressed ? [styles.pressed, styles.button] : styles.button}
                     ndroid_ripple={{color: '#88245b'}}

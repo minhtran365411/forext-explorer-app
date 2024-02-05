@@ -43,7 +43,9 @@ export class RegisterScreen extends Component {
             .doc(firebase.auth().currentUser.uid)
             .set({
                 name,
-                email
+                email,
+                reward: 0,
+                dailyStreak: 0
             })
             console.log(result)
         }).catch((error) => {

@@ -4,19 +4,58 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useState } from 'react'
 import * as Progress from 'react-native-progress';
 
+//firesbase
+import firebase from 'firebase/compat/app';
+import 'firebase/storage';
+require('firebase/firestore')
+require('firebase/storage')
+
+
 function SubGoalList (props) {
 
   const [done, setDone]  = useState(props.data.done);
   let currentPercentage = props.data.streakCounter / props.duration;
 
     function changeStatusHandler() {
+
         if (props.data.done == false) {
             setDone(true)
         } else {
             setDone(false)
         }
+
         props.toggleDoneHandler(props.data.subGoal)
+
+
+        //add daily streaks
+
+        var userRef = firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid);
+
+        userRef.get().then((doc) => {
+            let temDailyStreak = doc.data().dailyStreak;
+            if (done == false) {
+              temDailyStreak++;
+            } else {
+              temDailyStreak--;
+            }
+
+            //update daily streak
+            
+            userRef.update({
+                "dailyStreak": temDailyStreak
+            }).then((function() {
+                console.log('Success updatedaily streak')
+            }))
+
+
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+
+
     }
+
+    
     
 
     //console.log(props.data)

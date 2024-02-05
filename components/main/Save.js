@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {View, TextInput, Image, Button} from 'react-native'
+import {View, TextInput, Image, Button, StyleSheet, Text} from 'react-native'
 
 //import firebase from 'firebase/compat'
 import firebase from 'firebase/compat/app';
@@ -15,10 +15,12 @@ require('firebase/storage')
 export default function SaveScreen(props) {
     //console.log(props.route.params.image)
     //hook
+    const [showWarningText, setShowWarningText] = useState(false)
     const [caption, setCaption] = useState('')
 
 
     const uploadImage = async () => {
+        setShowWarningText(true);
         const uri = props.route.params.image;
 
         const response = await fetch(uri);
@@ -56,6 +58,7 @@ export default function SaveScreen(props) {
     }
 
     const savePostData = (downloadURL) => {
+
         firebase.firestore().collection('posts').doc(firebase.auth().currentUser.uid)
         .collection('userPosts')
         .add({
@@ -68,14 +71,43 @@ export default function SaveScreen(props) {
         }))
     }
 
+
   return (
-    <View style={{flex:1}}>
-        <Image source={{uri: props.route.params.image}}/>
+    <View style={styles.rootView}>
+        <Image style={styles.image} source={{uri: props.route.params.image}}/>
         <TextInput 
+        style={styles.input}
             placeholder='Insert caption'
             onChangeText={(caption) => setCaption(caption)}
         />
+        {showWarningText == true ? 
+        <Text style={styles.warningText}>Uploading, please wait until page refreshes.</Text>
+        : null}
         <Button title='Save' onPress={() => uploadImage()}/>
     </View>
   )
 }
+
+
+const styles = StyleSheet.create({
+    rootView: {
+        flex: 1,
+        alignItems: 'center'
+    },
+    image: {
+        height: 200,
+        width: 200,
+        marginVertical: 20
+    },
+    input: {
+        backgroundColor: 'white',
+        padding: 10,
+        width: '90%',
+        marginBottom: 15,
+        borderRadius: 15
+    },
+    warningText: {
+        color: 'red',
+        fontWeight: 'bold'
+    }
+})

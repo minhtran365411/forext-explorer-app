@@ -8,9 +8,13 @@ import AddNewGoal from '../goals/AddNewGoal';
 import AddNewSubGoal from '../goals/AddNewSubGoal';
 
 function NewGoal (props) {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
   const [userNewGoal, setUserNewGoal] = useState('');
   const [filledGoal, setFilledGoal] = useState(0);
-  const [ userEndDate, setUserEndDate] = useState(new Date());
+  const [ userEndDate, setUserEndDate] = useState(tomorrow);
 
   function clearInfo() {
     setUserNewGoal('');
