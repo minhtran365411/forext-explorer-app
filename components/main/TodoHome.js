@@ -22,11 +22,6 @@ function TodoHome (props) {
   let today = new Date().setHours(0,0,0,0);
   const [userDailyStreak, setUserDailyStreak] = useState(0)
 
-  // const [totalSubGoals, setTotalSubGoals] = useState()
-  //let percentage = 0;
-
-  
-  //let renderList;
 
   useEffect(() => {
 
@@ -122,28 +117,9 @@ function TodoHome (props) {
     setSelectedButton('progress')
   }
 
-  // function calculatePercentageProgress() {
-  //   percentage = userDailyStreak / totalSubGoals;
-  // }
 
   function completedBtnHandler() {
     setSelectedButton('overview')
-
-    // for (let i = 0; i < goalsList.length; i++) {
-    //   let temNumber = 0;
-    //   let temSubGoal = 0;
-    //   if (totalSubGoals) {
-    //     temSubGoal = totalSubGoals;
-    //   }
-    //   temNumber = goalsList[i].subGoals.length + 1 - 1;
-    //   temSubGoal = temSubGoal + temNumber;
-    //   setTotalSubGoals(temSubGoal)
-    // }
-
-    // console.log(totalSubGoals)
-
-    // calculatePercentageProgress();
-
   }
 
   function returnStringForProgress(percentage) {
@@ -243,11 +219,15 @@ function TodoHome (props) {
             :
               <View style={styles.dailyStreakContainer}>
                 <Text style={styles.emptyText}>Your daily streaks: {userDailyStreak} </Text>
-
-                <Progress.Circle color='#4A8C72' thickness={5}
-                progress={0.5} size={200} showsText={true} 
-                formatText={() => {return '50%'}} />
-
+                { 
+                  (userDailyStreak > 0) ?
+                  <View style={{flex:1}}>
+                    <Image source={require('../../assets/imgs/fox-goals.png')} resizeMode='cover' style={{height: 260, width: 260}} />
+                  </View>
+                  :
+                  <Text>Complete your daily goals to see the happy fox!</Text>
+                }
+                
               </View>
             
             }
@@ -352,7 +332,6 @@ const styles = StyleSheet.create({
       height: 260,
     },
     emptyText: {
-      marginVertical: '5%',
       marginHorizontal: '6%',
       fontSize: 18,
       fontWeight: 'bold'

@@ -2,7 +2,11 @@ import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View, Image} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
+import firebase from 'firebase/compat/app';
+
 function ImageModal(props) {
+
+  //console.log(firebase.auth().currentUser.uid)
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -45,11 +49,16 @@ function ImageModal(props) {
               </View>
 
               <View style={{flex:1}}>
-                <Pressable
-                style={styles.closeModal}
-                onPress={deletePost}>
-                <MaterialCommunityIcons  name="trash-can-outline" color={'#b60000'} size={30} />
-                </Pressable>
+                {(props.routeParams === firebase.auth().currentUser.uid) ?
+                  <Pressable
+                  style={styles.closeModal}
+                  onPress={deletePost}>
+                  <MaterialCommunityIcons  name="trash-can-outline" color={'#b60000'} size={30} />
+                  </Pressable>
+                : null
+                
+                }
+                
               </View>
 
             </View>

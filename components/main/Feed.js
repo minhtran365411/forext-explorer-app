@@ -5,6 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 //import components
 import FriendsPost from '../smallComponents/FriendsPost';
+import FriendDailyStreakComponent from '../smallComponents/FriendDailyStreakComponent';
 
 //import firebase from "firebase/compat";
 import firebase from 'firebase/compat/app';
@@ -16,6 +17,7 @@ import { connect } from 'react-redux'
 
 function FeedScreen(props) {
   const [posts, setPosts] = useState([]); 
+  const [friendDailyStreaks, setFriendDailyStreaks] = useState([]); 
 
   //see if it is the current user or not
   useEffect(()=>{
@@ -23,6 +25,8 @@ function FeedScreen(props) {
     // console.log('loaded'+props.usersLoaded);
     // console.log(props.following);
     if (props.usersFollowingLoaded == props.following.length && props.following.length !== 0) {
+
+      //console.log('props.following: '+props.following); this returns an array
 
       // for (let i = 0; i < props.following.length; i++) {
       //   const user = props.users.find(el => el.uid === props.following[i]);
@@ -35,7 +39,7 @@ function FeedScreen(props) {
 
       //order by time
       props.feed.sort(function(x,y) {
-        return x.creation - y.creation;
+        return y.creation - x.creation;
       })
 
       setPosts(props.feed)
@@ -44,8 +48,42 @@ function FeedScreen(props) {
 
     } 
 
+    //get following streaks
 
-  }, [props.usersFollowingLoaded, props.feed]) // this is called here because it is needed to be rerender
+   
+
+    for (let i = 0; i < props.following.length; i++) {
+
+      firebase.firestore().collection("users")
+      .doc(props.following[i])
+      .get().then((doc) => {
+          let temList = friendDailyStreaks;
+          
+          if (temList.length != props.following.length) {
+            temList.push({name: doc.data().name, dailyStreak: doc.data().dailyStreak, email: doc.data().email})
+          } else {
+              if (temList[i].email == doc.data().email) {
+                temList[i].dailyStreak = doc.data().dailyStreak
+              }
+              
+          }
+
+          
+          
+
+          setFriendDailyStreaks(temList);
+
+      }).catch((error) => {
+          console.log("Error in setting friends's daily streaks:", error);
+      });
+
+    }
+
+    console.log(friendDailyStreaks)
+
+
+  }, [props.usersFollowingLoaded, props.feed, friendDailyStreaks]) // this is called here because it is needed to be rerender
+
 
 
   return (
@@ -65,6 +103,19 @@ function FeedScreen(props) {
       <View style={styles.container}>
 
         {/* friend daily streaks */}
+
+        <View style={styles.dailyStreaks}>
+
+        <FlatList 
+        horizontal
+          data={friendDailyStreaks}
+          renderItem={({item}) => <FriendDailyStreakComponent data={item} />}
+          keyExtractor={item => item.id}
+        />
+          
+        </View>
+
+        {/* friend's posts */}
 
       <View style={styles.containerGallery}>
         <FlatList 
@@ -100,7 +151,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex:1,
-    marginTop: 50,
+    //marginTop: 10,
     marginBottom: 80,
     marginHorizontal: '2%'
   },
@@ -155,5 +206,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: 700,
     letterSpacing: 3
-  }
+  },
+  dailyStreaks: {
+    borderBottomColor: '#4A8C72',
+    borderBottomWidth: 1,
+    margin: 15,
+    paddingBottom: 10,
+    justifyContent: 'center',
+
+  },
+  
 })

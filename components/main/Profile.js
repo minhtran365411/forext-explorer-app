@@ -157,7 +157,7 @@ function ProfileScreen(props) {
           numColumns={3}
           horizontal={false}
           data={userPost}
-          renderItem={({item}) => <ImageModal data={item} deletePost={deletePost} />}
+          renderItem={({item}) => <ImageModal data={item} deletePost={deletePost} routeParams={props.route.params.uid} />}
         />
       </View>
         
