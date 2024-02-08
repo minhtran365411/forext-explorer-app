@@ -9,7 +9,7 @@ import 'firebase/compat/firestore';
 import globalstyle from '../../assets/globalstyle';
 import * as Font from 'expo-font';
 
-
+//
 export class RegisterScreen extends Component {
 
     componentDidMount() {
@@ -45,7 +45,8 @@ export class RegisterScreen extends Component {
                 name,
                 email,
                 reward: 0,
-                dailyStreak: 0
+                dailyStreak: 0,
+                lastStampDate: new Date().setHours(0,0,0,0),
             })
             console.log(result)
         }).catch((error) => {
@@ -70,7 +71,7 @@ export class RegisterScreen extends Component {
         <View style={globalstyle.headerContainer}>
             <Text style={[globalstyle.brandTitle, {fontFamily: 'TomeOfTheUnknown'}]}>Forest Explorer</Text>
             <Text style={[globalstyle.headerTitle, {fontFamily: 'Eglantine'}]}>Sign Up</Text>
-        </View>
+        </View> 
 
         <View style={globalstyle.formContainer}>
             <TextInput 

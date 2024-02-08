@@ -51,7 +51,7 @@ export function fetchUserPosts() {
                 return {id, ...data}
                 
             })
-            console.log(posts)
+            //console.log(posts)
             dispatch({type: USER_POSTS_STATE_CHANGE, posts})
         })
     })

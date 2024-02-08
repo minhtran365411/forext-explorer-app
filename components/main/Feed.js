@@ -60,7 +60,7 @@ function FeedScreen(props) {
           let temList = friendDailyStreaks;
           
           if (temList.length != props.following.length) {
-            temList.push({name: doc.data().name, dailyStreak: doc.data().dailyStreak, email: doc.data().email})
+            temList.push({name: doc.data().name, dailyStreak: doc.data().dailyStreak, email: doc.data().email, lastStampDate: doc.data().lastStampDate})
           } else {
               if (temList[i].email == doc.data().email) {
                 temList[i].dailyStreak = doc.data().dailyStreak
@@ -79,7 +79,7 @@ function FeedScreen(props) {
 
     }
 
-    console.log(friendDailyStreaks)
+    //console.log(friendDailyStreaks)
 
 
   }, [props.usersFollowingLoaded, props.feed, friendDailyStreaks]) // this is called here because it is needed to be rerender

@@ -46,7 +46,7 @@ function ProfileScreen(props) {
         firebase.firestore().collection("posts")
         .doc(props.route.params.uid)
         .collection('userPosts')
-        .orderBy('creation', 'asc')
+        .orderBy('creation', 'desc')
         .get()
         .then((snapshot) => {
             //map seperated documents into little docs
@@ -155,7 +155,7 @@ function ProfileScreen(props) {
       <View style={styles.containerGallery}>
         <FlatList 
           numColumns={3}
-          horizontal={false}
+          //horizontal={false}//
           data={userPost}
           renderItem={({item}) => <ImageModal data={item} deletePost={deletePost} routeParams={props.route.params.uid} />}
         />

@@ -76,6 +76,7 @@ function ImageModal(props) {
     {/* Print out image on list */}
     <View style={styles.containerImage}>
         <Pressable
+        style={{flex: 1}}
             onPress={() => setModalVisible(true)}>
             <Image 
                 source={{uri: props.data.downloadURL}}
@@ -116,12 +117,17 @@ const styles = StyleSheet.create({
         elevation: 5,
       },
       image: {
-        flex: 1,
-        aspectRatio: 1/1
+        // flex: 1,
+        aspectRatio: 1/1,
+        //height: 120,
+        width: '100%',
       },
       containerImage: {
-        flex: 1/3,
-        marginHorizontal: 2
+        //flex: 1/3,
+        marginHorizontal: 2,
+        flex: 1,
+        flexDirection: 'column',
+        margin: 1,
       },
       closeModal: {
         alignSelf: 'flex-end'

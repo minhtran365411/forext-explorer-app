@@ -159,10 +159,10 @@ export class App extends Component {
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Landing">
 
-            {/* {this.loading ? <Loading />
+            {this.loading ? <Loading />
             : this.viewedOnboarding? <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             : <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
-            } */}
+            }
 
             {/* <Stack.Screen name="Landing" component={LandingScreen} 
             options={{ headerShown: false }} /> */}

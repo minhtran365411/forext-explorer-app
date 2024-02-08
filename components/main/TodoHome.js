@@ -18,6 +18,7 @@ function TodoHome (props) {
   const [userName, setUserName] = useState(null)
   const [selectedButton, setSelectedButton] = useState('progress')
   const [goalsList, setGoalsList] = useState([]);
+  const [temGoalsList, setTemGoalsList] = useState([]);
   const [reward, setReward] = useState();
   let today = new Date().setHours(0,0,0,0);
   const [userDailyStreak, setUserDailyStreak] = useState(0)
@@ -43,9 +44,8 @@ function TodoHome (props) {
 
     var userGoalsRef = firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid).collection('userGoals');
 //.orderBy('reward').endAt(0)
-    userGoalsRef
-    .get()
-    .then((snapshot) => {
+    userGoalsRef.orderBy('creation', 'desc')
+    .get().then((snapshot) => {
         //map seperated documents into little docs filter((doc) => doc.data().done == false)
         let posts = snapshot.docs.map(doc => {
             const data = doc.data();
@@ -71,42 +71,48 @@ function TodoHome (props) {
                     "lastStampDate": new Date().setHours(0,0,0,0),
                 }).then((function() {
                     console.log('Success updating new timstamp')
-
-                    //update in user dailystreak time stamp
-
-                    firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
-                    .update({
-                      "dailyStreak": 0
-                    }).then((function() {
-                        console.log('Success reset streak')
-                    }))
-                    
-                    //get new data again
-                    
-                    userGoalsRef.orderBy('creation', 'desc')
-                    .get()
-                    .then((snapshot) => {
-                        //map seperated documents into little docs
-                        let posts = snapshot.docs.map(doc => {
-                            const data = doc.data();
-                            //console.log(data)
-                            const id = doc.id;
-                            return {id, ...data}
-                        })
-                        setGoalsList([...posts]); 
-                      })
-
-                      props.navigation.navigate("TodoHome")
-
+                      
                 }))
 
-              //}
-            
+
+                 //update in user dailystreak time stamp
+
+                 firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid)
+                 .update({
+                   "dailyStreak": 0,
+                   "lastStampDate": new Date().setHours(0,0,0,0) 
+                 }).then((function() {
+                     console.log('Success reset streak')
+                 }))
+                 
+                 //get new data again
+                 
+                 firebase.firestore().collection('goals').doc(firebase.auth().currentUser.uid).collection('userGoals')
+                 .orderBy('creation', 'desc')
+                 .get().then((snapshot) => {
+                     //map seperated documents into little docs
+                     let temPosts = snapshot.docs.map(doc => {
+                         const data = doc.data();
+                         console.log(data)
+                         const id = doc.id;
+                         return {id, ...data}
+                     })
+                     setTemGoalsList([...temPosts])
+                     setGoalsList([...temPosts]);
+                     console.log(temPosts)
+                     console.log('temPost'+goalsList)
+                     console.log(temGoalsList)
+                   })
+
+                   //props.navigation.navigate("TodoHome")
+              //should return here 
+                return;
           } 
         //}    
         })
-
+        //console.log([...posts])
         setGoalsList([...posts]);
+        
 
 
     })
