@@ -11,9 +11,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import firebase from 'firebase/compat/app';
 //tab nav
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-
 const Tab = createBottomTabNavigator();
+
 
 const EmptyScreen = () => {
     return(null)
@@ -35,7 +34,10 @@ export class MainScreen extends Component {
         this.props.fetchUserFollowing();
         
     }
+
+    
   render() {
+
     
     return (    
     

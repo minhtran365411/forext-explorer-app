@@ -3,7 +3,13 @@ import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import React, { Component, useState, useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+//get custom fonts
+import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -43,7 +49,10 @@ import SaveScreen from './components/main/Save'
 import CommentScreen from './components/main/Comment';
 import ProfileScreen from './components/main/Profile'
 import DetailGoal from './components/goals/DetailGoal';
-
+import Paramodo from './components/extramenu/Paramodo';
+import ProductivityTips from './components/extramenu/ProductivityTips';
+import WildFireFacts from './components/extramenu/WildFireFacts';
+import AboutUs from './components/extramenu/AboutUs';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,42 +64,7 @@ const Loading = () => {
 }
 
 
-// const [loading, setLoading] = useState(true);
-// const [viewedOnboarding, setViewOnboarding] = useState(false);
-
-// const checkOnboarding = async () => {
-//   try {
-//     const value = await AsyncStorage.getItem('@viewOnboarding');
-
-//     if (value !== null) {
-//       this.setState({
-//         viewedOnboarding: true
-//       })
-//     }
-
-//   } catch (err) {
-//     console.log('Error @checkOnboarding' + err)
-//   } finally {
-//     this.setState({
-//       loading: false
-//     })
-//   }
-// }
-
-// useEffect(() => {
-//   checkOnboarding();
-// },[]);
-
-
 export class App extends Component {
-
-  componentDidMount() {
-    Font.loadAsync({
-        'TomeOfTheUnknown': require('../../assets/fonts/Tomeoftheunknown-3gL3.ttf'),
-        'Eglantine': require('../../assets/fonts/Eglantine-Vy9x.ttf'),
-        'NunitoRegular': require('../../assets/fonts/Nunito-Regular.ttf'),
-    });
-  }
 
   //check to see whether user needs login or signup
   constructor (props) {
@@ -113,9 +87,12 @@ export class App extends Component {
         const value = await AsyncStorage.getItem('@viewOnboarding');
     
         if (value !== null) {
+
           this.setState({
             viewedOnboarding: true
           })
+
+          AsyncStorage.setItem('@viewOnboarding', viewedOnboarding);
         }
     
       } catch (err) {
@@ -129,21 +106,29 @@ export class App extends Component {
     //when user click on log out which called sign out it will trigger this
     //listen to auth changes 
     firebase.auth().onAuthStateChanged((user) => {
+     // const uid = user.uid;
       if(!user) {
+
         this.setState({
           loggedIn: false, 
           loaded: true
         })
+        //AsyncStorage.removeItem('token');
+
       } else {
+
         this.setState({
           loggedIn: true, 
           loaded: true
         })
+        //AsyncStorage.setItem('token', uid);
+
       }
     })
   }
 
   render() {
+
 
     const {loggedIn, loaded} = this.state;
     if(!loaded) {
@@ -180,13 +165,25 @@ export class App extends Component {
       //provider is from redux
       <Provider store={store}> 
       <NavigationContainer>
-         <Stack.Navigator initialRouteName="Main">
+         <Stack.Navigator initialRouteName="Main"
+         screenOptions={{
+          headerStyle: {
+            backgroundColor: '#D47B2B',
+          },
+          headerMode: 'screen',
+          headerTintColor: 'white',
+         }}
+         >
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} navigation={this.props.navigation} />
           <Stack.Screen name="Add" component={AddScreen} navigation={this.props.navigation} />
           <Stack.Screen name="Save" component={SaveScreen} navigation={this.props.navigation}/>
           <Stack.Screen name="Comment" component={CommentScreen} navigation={this.props.navigation}/>
           <Stack.Screen name="Profile" component={ProfileScreen} navigation={this.props.navigation}/>
           <Stack.Screen name="Your Progress" component={DetailGoal} navigation={this.props.navigation}/>
+          <Stack.Screen name="Paramodo" component={Paramodo} navigation={this.props.navigation} options={{ title: 'Set Paramodo Timer'}}/>
+          <Stack.Screen name="ProductivityTips" component={ProductivityTips} navigation={this.props.navigation} options={{ title: 'Productivity Tips'}} />
+          <Stack.Screen name="WildFireFacts" component={WildFireFacts} navigation={this.props.navigation} options={{ title: 'Wild Fire Facts'}}/>
+          <Stack.Screen name="AboutUs" component={AboutUs} navigation={this.props.navigation} options={{ title: 'About A Foxes Tale'}}/>
           </Stack.Navigator>
       </NavigationContainer>
         

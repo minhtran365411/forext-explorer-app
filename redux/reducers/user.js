@@ -3,7 +3,8 @@ import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE
 const initialState = {
     currentUser: null,
     posts: [],
-    following: []
+    following: [],
+    
 }
 
 export const user = (state = initialState, action) => {
@@ -27,7 +28,8 @@ export const user = (state = initialState, action) => {
          return {
             currentUser: null,
             posts: [],
-            following: []
+            following: [],
+            
          }
          
         default:

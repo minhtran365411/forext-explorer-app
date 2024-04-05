@@ -1,5 +1,5 @@
 import React from "react";
-import {Text, SafeAreaView, StyleSheet, View, Pressable, Image, FlatList, Alert} from 'react-native'
+import {Text, SafeAreaView, StyleSheet, View, Pressable, Image, FlatList, Alert, ScrollView} from 'react-native'
 import { useState, useEffect } from "react";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -97,6 +97,7 @@ function DetailGoal(props) {
             daysLeft = 0;
         } else {
             daysLeft = betweenDays;
+            daysLeft = ~~daysLeft;
         }
         
     }
@@ -165,6 +166,7 @@ function DetailGoal(props) {
 
     return (
         <SafeAreaView style={styles.rootView}>
+            <ScrollView>
       
         <View style={styles.titleContainer}>
             <Text style={styles.bigTitle}>{props.route.params.goalData.goal}</Text>
@@ -215,7 +217,7 @@ function DetailGoal(props) {
             <View></View>
         }
        
-
+       </ScrollView>
         </SafeAreaView>
     )
 }
@@ -225,8 +227,10 @@ export default DetailGoal;
 const styles = StyleSheet.create({
   rootView: {
     flex: 1,
-    backgroundColor: '#fff9f0'
+    backgroundColor: '#fff9f0',
+    
     },
+    
     titleContainer: {
         margin: '5%',
     },
@@ -253,7 +257,8 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#BA3D1F',
         height: 50,
-        marginTop: 50,
+        marginTop: 30,
+        marginBottom: 50,
         width: '60%',
         borderRadius: 25,
         justifyContent: 'center',

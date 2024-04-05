@@ -60,6 +60,10 @@ const styles = StyleSheet.create({
     messageText: {
         marginTop: 30,
         textDecorationLine: 'underline'
+    },
+    errorMsg: {
+        fontSize: 12,
+        fontStyle: 'italic'
     }
 })
 

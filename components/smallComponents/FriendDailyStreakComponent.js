@@ -8,6 +8,7 @@ function FriendDailyStreakComponent(props) {
   var lastStampDate = props.data.lastStampDate;
   
   let betweenDays = (today - lastStampDate) / 86400000;
+  betweenDays = ~~betweenDays;
   if (betweenDays == 0) {
     daysAgo = 'today';
   } else {

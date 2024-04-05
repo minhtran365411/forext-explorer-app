@@ -6,6 +6,7 @@ import * as Progress from 'react-native-progress';
 
 
 import GoalListComponent from '../goals/GoalListComponent';
+import ExtraMenuItem from '../ui/ExtraMenuItem';
 
 //firesbase
 import firebase from 'firebase/compat/app';
@@ -22,6 +23,7 @@ function TodoHome (props) {
   const [reward, setReward] = useState();
   let today = new Date().setHours(0,0,0,0);
   const [userDailyStreak, setUserDailyStreak] = useState(0)
+
 
 
   useEffect(() => {
@@ -127,14 +129,16 @@ function TodoHome (props) {
     setSelectedButton('overview')
   }
 
+  function extraBtnHandler() {
+    setSelectedButton('extra')
+  }
+
   function returnStringForProgress(percentage) {
     let num = Math.round(percentage * 100)
     let string = num.toString();
     let returnString = string + '%'
     return returnString;
   }
-
-
 
   
     return (
@@ -173,7 +177,6 @@ function TodoHome (props) {
             </View>
 
             <View>
-
                <Pressable style={styles.avatarContainer} onPress={() => props.navigation.navigate("Profile", {uid: firebase.auth().currentUser.uid})}>
                 <Image source={require('../../assets/imgs/fox.png')} style={{height: 50, width: 50, borderRadius: 25}}
                 resizeMode='cover'
@@ -206,9 +209,18 @@ function TodoHome (props) {
               </Pressable>
             </View>
 
+            <View style={styles.buttonContainer}>
+              <Pressable style={(selectedButton === 'extra') ? [styles.button, styles.selectedButton] : styles.button}
+                onPress={extraBtnHandler}
+              >
+                <Text style={ (selectedButton === 'extra') ? [styles.buttonText, styles.selectedText] : styles.buttonText }>Extra</Text>
+              </Pressable>
+            </View>
+
           </View>
 
           <View style={styles.list}>
+
             
             {(selectedButton === 'progress') ? 
             (
@@ -222,18 +234,34 @@ function TodoHome (props) {
               <Text style={styles.emptyText}>You have not log in any goals yet</Text>
             )
             :
-              <View style={styles.dailyStreakContainer}>
-                <Text style={styles.emptyText}>Your daily streaks: {userDailyStreak} </Text>
-                { 
-                  (userDailyStreak > 0) ?
-                  <View style={{flex:1}}>
-                    <Image source={require('../../assets/imgs/fox-goals.png')} resizeMode='cover' style={{height: 260, width: 260}} />
-                  </View>
-                  :
-                  <Text>Complete your daily goals to see the happy fox!</Text>
-                }
-                
-              </View>
+            (
+              (selectedButton === 'overview') ? 
+                (
+                    <View style={styles.dailyStreakContainer}>
+                      <Text style={styles.emptyText}>Your daily streaks: {userDailyStreak} </Text>
+                      { 
+                        (userDailyStreak > 0) ?
+                        <View style={{flex:1}}>
+                          <Image source={require('../../assets/imgs/fox-goals.png')} resizeMode='cover' style={{height: 260, width: 260}} />
+                        </View>
+                        :
+                        <Text>Complete your daily goals to see the happy fox!</Text>
+                      }
+                      
+                    </View>
+                )
+              :
+              (
+                <View style={styles.dailyStreakContainer}>
+                    <ExtraMenuItem navigation={props.navigation} link="Paramodo" pageName="Paramodo" />
+                    <ExtraMenuItem navigation={props.navigation} link="ProductivityTips" pageName="Productivity Tips" />
+                    <ExtraMenuItem navigation={props.navigation} link="WildFireFacts" pageName="Wild Fire Facts" />
+                    <ExtraMenuItem navigation={props.navigation} link="AboutUs" pageName="About A Foxes Tale" />
+                </View>
+              )
+
+            )
+              
             
             }
 

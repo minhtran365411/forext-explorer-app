@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import {View, TextInput, Text, TouchableOpacity, ImageBackground, SafeAreaView, Alert } from 'react-native';
+import React, { Component, useState } from 'react'
+import {ActivityIndicator, View, TextInput, Text, TouchableOpacity, ImageBackground, SafeAreaView, Alert, Pressable, StyleSheet } from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -10,20 +10,14 @@ import * as Font from 'expo-font';
 
 export class LoginScreen extends Component {
 
-    componentDidMount() {
-        Font.loadAsync({
-            'TomeOfTheUnknown': require('../../assets/fonts/Tomeoftheunknown-3gL3.ttf'),
-            'Eglantine': require('../../assets/fonts/Eglantine-Vy9x.ttf'),
-            'NunitoRegular': require('../../assets/fonts/Nunito-Regular.ttf'),
-        });
-      }
-
     constructor(props) {
         super(props);
         //choose when to run this
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            fontsLoaded: false,
+            notFilled: false
         }
 
         //for signUp function to read this vars
@@ -39,15 +33,36 @@ export class LoginScreen extends Component {
         }).catch((error) => {
             Alert.alert(
                 'Please check again',
-                'Error with wmail or password!',
+                'Error with email or password! '+ error,
                 [{text: 'Got It', style: 'cancel'}]
             );
             console.log(error)
         })
     }
 
+    async componentDidMount() {
+        await Font.loadAsync({
+            'TomeOfTheUnknown': require('../../assets/fonts/Tomeoftheunknown-3gL3.ttf'),
+            'Eglantine': require('../../assets/fonts/Eglantine-Vy9x.ttf'),
+            'NunitoRegular': require('../../assets/fonts/Nunito-Regular.ttf'),
+        }).then(() => {
+            this.setState({fontsLoaded: true})
+        });
+
+      }
+
   render() {
     const { navigation } = this.props;
+
+    if (this.state.email.length == 0 || this.state.password.length == 0) {
+        this.state.notFilled = true;
+    } else {
+        this.state.notFilled = false;
+    }
+
+    if (this.state.fontsLoaded === false) {
+        return <ActivityIndicator size="large" color="#00ff00" />
+    }
 
     return (
 
@@ -75,19 +90,14 @@ export class LoginScreen extends Component {
             onChangeText={(password) => this.setState({ password })}
         />
 
-        <TouchableOpacity
-            style={globalstyle.signUpBtn}
+        <Pressable
+            style={({pressed}) => pressed ? [globalstyle.signUpBtn, styles.pressed ] : globalstyle.signUpBtn}
             onPress={() => this.onSignIn()}
+            disabled= {this.state.notFilled}
         >
             <Text style={{fontFamily: 'NunitoRegular', color: '#fff', fontSize: 20}}>LOG IN</Text>
-        </TouchableOpacity>
+        </Pressable>
             
-        
-        {/* <Button 
-            title='Don’t have an account? Sign Up!'
-            style={globalstyle.messageText}
-            onPress={() => navigation.navigate('Register')}
-        /> */}
 
         <TouchableOpacity
             onPress={() => navigation.navigate('Register')}
@@ -104,27 +114,14 @@ export class LoginScreen extends Component {
 
       </SafeAreaView>
 
-    //   <View>
-
-    //     <TextInput 
-    //         placeholder='Email'
-    //         onChangeText={(email) => this.setState({ email })}
-    //     />
-
-    //     <TextInput 
-    //         placeholder='Password'
-    //         secureTextEntry={true}
-    //         onChangeText={(password) => this.setState({ password })}
-    //     />
-
-    //     <Button 
-    //         onPress={() => this.onSignIn()}
-    //         title='Sign In'
-    //     />
-
-    //   </View>
     )
   }
 }
 
-export default LoginScreen
+export default LoginScreen;
+
+const styles = StyleSheet.create({
+    pressed: {
+        opacity: 0.75
+    }
+})

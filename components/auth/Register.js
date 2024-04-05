@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View, TextInput, Text, TouchableOpacity, ImageBackground, SafeAreaView, Alert } from 'react-native';
+import {ActivityIndicator, View, TextInput, Text, TouchableOpacity, ImageBackground, SafeAreaView, Alert, Pressable, StyleSheet } from 'react-native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -9,16 +9,9 @@ import 'firebase/compat/firestore';
 import globalstyle from '../../assets/globalstyle';
 import * as Font from 'expo-font';
 
-//
+
 export class RegisterScreen extends Component {
 
-    componentDidMount() {
-        Font.loadAsync({
-            'TomeOfTheUnknown': require('../../assets/fonts/Tomeoftheunknown-3gL3.ttf'),
-            'Eglantine': require('../../assets/fonts/Eglantine-Vy9x.ttf'),
-            'NunitoRegular': require('../../assets/fonts/Nunito-Regular.ttf'),
-        });
-      }
     
     constructor(props) {
         super(props);
@@ -26,13 +19,26 @@ export class RegisterScreen extends Component {
         this.state = {
             email: '',
             password: '',
-            name: ''
+            name: '',
+            fontsLoaded: false,
+            notFilled: false
         }
 
         //for signUp function to read this vars
         this.onSignUp = this.onSignUp.bind(this)
         
     }
+
+    async componentDidMount() {
+        await Font.loadAsync({
+            'TomeOfTheUnknown': require('../../assets/fonts/Tomeoftheunknown-3gL3.ttf'),
+            'Eglantine': require('../../assets/fonts/Eglantine-Vy9x.ttf'),
+            'NunitoRegular': require('../../assets/fonts/Nunito-Regular.ttf'),
+        }).then(() => {
+            this.setState({fontsLoaded: true})
+        });
+
+      }
 
     //function when btn clicked
     onSignUp() {
@@ -52,7 +58,7 @@ export class RegisterScreen extends Component {
         }).catch((error) => {
             Alert.alert(
                 'Please check again',
-                'Name, email and password must be provided.',
+                'Name, email and password must be provided. '+ error,
                 [{text: 'Got It', style: 'cancel'}]
             );
             console.log(error)
@@ -62,6 +68,17 @@ export class RegisterScreen extends Component {
   render() {
 
     const { navigation } = this.props;
+
+    if (this.state.email.length == 0 || this.state.password.length == 0 || this.state.name.length == 0) {
+        this.state.notFilled = true;
+    } else {
+        this.state.notFilled = false;
+    }
+
+
+    if (this.state.fontsLoaded === false) {
+        return <ActivityIndicator size="large" color="#00ff00" />
+    }
     
     return (
       <SafeAreaView style={{flex:1}} >
@@ -74,6 +91,9 @@ export class RegisterScreen extends Component {
         </View> 
 
         <View style={globalstyle.formContainer}>
+        
+            <Text style={globalstyle.errorMsg}>Email must have '@' & password must have at least 6 characters.</Text>
+        
             <TextInput 
                 style={globalstyle.inputBox}
                 placeholder='Name'
@@ -93,12 +113,13 @@ export class RegisterScreen extends Component {
             onChangeText={(password) => this.setState({ password })}
         />
 
-        <TouchableOpacity
-            style={globalstyle.signUpBtn}
+        <Pressable
+             style={({pressed}) => pressed ? [globalstyle.signUpBtn, styles.pressed ] : globalstyle.signUpBtn}
             onPress={() => this.onSignUp()}
+            disabled= {this.state.notFilled}
         >
             <Text style={{fontFamily: 'NunitoRegular', color: '#fff', fontSize: 20}}>JOIN THE FOREST</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
@@ -117,5 +138,12 @@ export class RegisterScreen extends Component {
   }
 }
 
-export default RegisterScreen
+export default RegisterScreen;
  
+
+const styles = StyleSheet.create({
+    pressed: {
+        opacity: 0.75
+    },
+
+})
