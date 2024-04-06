@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Timer from '../ui/Timer';
 import ParamodoContext from '../../redux/ParamodoContext';
-import { FontAwesome6 } from '@expo/vector-icons';
+//import { FontAwesome6 } from '@expo/vector-icons';
 
 
 export default function Paramodo({navigation}) {
@@ -76,11 +76,11 @@ export default function Paramodo({navigation}) {
              <Timer />
         </ParamodoContext.Provider>
 
-        <View style={styles.questionBtn}>
+        {/* <View style={styles.questionBtn}>
             <Pressable onPress={() => navigation.navigate('Procrastination')}>
                 <FontAwesome6 name="circle-question" size={50} color="#4A8C72" />
             </Pressable>
-        </View>
+        </View> */}
 
         </View>
         </TouchableWithoutFeedback>
@@ -140,10 +140,10 @@ const styles = StyleSheet.create({
         color: 'white',
         marginBottom: 5
     },
-    questionBtn: {
-        position: 'absolute',
-        bottom:0,
-        right:10,
-    }
+    // questionBtn: {
+    //     position: 'absolute',
+    //     bottom:0,
+    //     right:10,
+    // }
     
 })

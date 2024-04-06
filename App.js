@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Pressable } from 'react-native';
 import React, { Component, useState, useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -185,7 +186,16 @@ export class App extends Component {
           <Stack.Screen name="Comment" component={CommentScreen} navigation={this.props.navigation}/>
           <Stack.Screen name="Profile" component={ProfileScreen} navigation={this.props.navigation}/>
           <Stack.Screen name="Your Progress" component={DetailGoal} navigation={this.props.navigation}/>
-          <Stack.Screen name="Paramodo" component={Paramodo} navigation={this.props.navigation} options={{ title: 'Set Paramodo Timer'}}/>
+          <Stack.Screen name="Paramodo" component={Paramodo} navigation={this.props.navigation} 
+          options={({navigation}) => ({
+             title: 'Set Paramodo Timer',
+            headerRight: ({tintColor}) => (
+              <Pressable onPress={() => navigation.navigate('Procrastination')}>
+                <FontAwesome6 name="circle-question" size={30} color={tintColor} />
+              </Pressable>
+            )
+          })}
+          />
           <Stack.Screen name="ProductivityTips" component={ProductivityTips} navigation={this.props.navigation} options={{ title: 'Productivity Tips'}} />
           <Stack.Screen name="WildFireFacts" component={WildFireFacts} navigation={this.props.navigation} options={{ title: 'Wild Fire Facts'}}/>
           <Stack.Screen name="AboutUs" component={AboutUs} navigation={this.props.navigation} options={{ title: 'About A Foxes Tale'}}/>
