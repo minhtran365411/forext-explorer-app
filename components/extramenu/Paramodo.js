@@ -1,15 +1,18 @@
-import { View, Text, StyleSheet, Pressable, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import axios from 'axios';
+import Timer from '../ui/Timer';
+import ParamodoContext from '../../redux/ParamodoContext';
+import { FontAwesome6 } from '@expo/vector-icons';
 
-export default function Paramodo() {
 
-    const [isPlaying, setIsPlaying] = useState(false);
+export default function Paramodo({navigation}) {
+
+    const [quote, setQuote] = useState('Trust the process')
+
+    
     const [workingTime, setWorkingTime] = useState(0);
     const [breakTime, setBreakTime] = useState(0);
-    const [key, setKey] = useState(0);
-    const [quote, setQuote] = useState('Trust the process')
 
     useEffect(() => {
         async function fetchQuote () {
@@ -21,34 +24,25 @@ export default function Paramodo() {
        
     },[])
 
-    const children = ({ remainingTime }) => {
+    // function returnText() {
+    //     return (
+    //         <Text>{currentPogress}%</Text>
+    //     )
+    // }
 
-        const minutes = Math.floor(remainingTime / 60)
-        const seconds = remainingTime % 60
-      
-        //return `${minutes}:${seconds}`
-
-        if (!remainingTime) {
-            return (
-                <Text style={{ fontSize: 40 }}>00:00</Text>
-            )
-        }
-
-        return (
-            <Text style={{ fontSize: 40 }}>
-                {(minutes < 10) ? `0${minutes}` : minutes}:{(seconds < 10) ? `0${seconds}` : seconds}
-            </Text>
-        )
-      }
-
-      const workingTimeToSecs = workingTime*60;
+    
 
   return (
+    <ScrollView style={styles.root}>
     <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()} accessible={false}>
     <View style={styles.container}>
         
         <View style={styles.settingMenu}>
-            <Text style={styles.heading}>"{quote}"</Text>
+
+            <View style={styles.block}>
+                <Text style={styles.heading}>"{quote}"</Text>
+            </View>
+            
         
 
         <View style={styles.timeSetting}>
@@ -57,7 +51,7 @@ export default function Paramodo() {
                 <TextInput 
                 value={workingTime}
                 onChangeText={(value) => setWorkingTime(value)}
-                style={styles.timeInput} maxLength={2} 
+                style={styles.timeInput} maxLength={3} 
                 placeholder='Minutes' keyboardType='number-pad' />
             </View>
             <Text style={{fontSize:30}}>:</Text>
@@ -72,53 +66,36 @@ export default function Paramodo() {
         </View>
            
         </View>
-    
-      <CountdownCircleTimer
-       key={key}
-      isPlaying={isPlaying}
-      duration={workingTime*60}
-      colors={["#44AE53", "#F7B801", "#BA3D1F", "#8e7155"]}
-      colorsTime={[workingTimeToSecs, workingTimeToSecs*0.75, workingTimeToSecs*0.5, workingTimeToSecs*0.25]}
-      onComplete={() => {
-        // do your stuff here
-        return { shouldRepeat: true, delay: breakTime*60 } 
-      }}
-      updateInterval={0}
-    >
-     {children}
-      </CountdownCircleTimer>
 
-        <View style={styles.buttonsContainer}>
+        <ParamodoContext.Provider
+            value={{
+                workingTime: workingTime,
+                breakTime: breakTime
+            }}
+        >
+             <Timer />
+        </ParamodoContext.Provider>
 
-            <Pressable style={({pressed}) => pressed ? [styles.pressed, styles.button] : styles.button}
-            onPress={() => setIsPlaying(prev => !prev)}>
-                <Text style={styles.buttonText}>
-                    {isPlaying ? 
-                    'Pause'
-                    :
-                    'Start'
-                    }
-                </Text>
+        <View style={styles.questionBtn}>
+            <Pressable onPress={() => navigation.navigate('Procrastination')}>
+                <FontAwesome6 name="circle-question" size={50} color="#4A8C72" />
             </Pressable>
+        </View>
 
-            <Pressable style={({pressed}) => pressed ? [styles.pressed, styles.button ,styles.resetButton] : [styles.button ,styles.resetButton]}
-            onPress={() => setKey(prevKey => prevKey + 1)}>
-                <Text style={styles.buttonText}>
-                    Restart
-                </Text>
-            </Pressable>
+        </View>
+        </TouchableWithoutFeedback>
+        </ScrollView>
 
-      </View>
-
-    </View>
-    </TouchableWithoutFeedback>
   )
 }
 
 const styles = StyleSheet.create({
-    container: {
+    root: {
         backgroundColor: '#fff9f0',
         flex: 1,
+    },
+    container: {
+        marginBottom: '20%',
         alignItems: 'center'
     },
     settingMenu: {
@@ -126,13 +103,22 @@ const styles = StyleSheet.create({
         marginBottom: '10%',
         alignItems: 'center'
     },
+    block: {
+        backgroundColor: 'white',
+        padding: '3%',
+        borderRadius: 15,
+        elevation: 2, //android only property
+        shadowColor: 'black', //ios only
+        shadowOffset: {width: 2 ,height: 2},
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+        width: '90%',
+        marginBottom: '5%'
+    },
     heading: {
-        fontSize: 20,
+        fontSize: 16,
         textAlign: 'center',
-        marginBottom: '6%',
-        marginHorizontal: '5%',
-        fontFamily: 'Eglantine',
-
+        //fontFamily: 'Eglantine',
     },
     timeSetting: {
         flexDirection: 'row',
@@ -154,36 +140,10 @@ const styles = StyleSheet.create({
         color: 'white',
         marginBottom: 5
     },
-    buttonsContainer:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: '3%'
-    },
-    button: {
-        marginTop: '10%',
-        backgroundColor: '#d37b2b',
-        height: 50,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 2, //android only property
-        shadowColor: '#3d0d0d', //ios only
-        shadowOffset: {width: 2 ,height: 3},
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        flex: 1,
-        marginHorizontal: '2%'
-    },
-    resetButton: {
-        backgroundColor: '#BA3D1F',
-    },
-    buttonText: {
-        fontSize: 30,
-        color: 'white',
-        textAlign: 'center',
-        fontFamily: 'Eglantine',
-    },
-    pressed: {
-        opacity: 0.75
+    questionBtn: {
+        position: 'absolute',
+        bottom:0,
+        right:10,
     }
+    
 })

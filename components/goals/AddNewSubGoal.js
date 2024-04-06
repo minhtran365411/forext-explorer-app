@@ -17,6 +17,8 @@ require('firebase/storage')
 
 function AddNewSubGoal (props) {
 
+  const [aiPressed, setAiPressed] = useState(false);
+
     //AI
     const [response, setResponse] = useState('')
     const fetchAIResponse = async () => {
@@ -50,6 +52,8 @@ function AddNewSubGoal (props) {
             setSubGoal2(splitResponse[1]);
             setSubGoal3(splitResponse[2]);
         } 
+
+        setAiPressed(true);
 
       } catch (error) {
         console.error('Error sending chat request:', error);
@@ -139,10 +143,11 @@ function AddNewSubGoal (props) {
           <Text style={styles.subTitle}>Your goal is: {props.userNewGoal}</Text>
           <Text style={styles.subTitle}>Duration: {daysInBetween} days</Text>
 
-          <Pressable style={{marginTop: 10}} onPress={fetchAIResponse}>
-          <View style={styles.aiButton}>
-              <Text style={{fontWeight: 'bold', color: '#3d0d0d'}}>Get AI suggestions</Text>
-              <MaterialCommunityIcons  name="magic-staff" color={'#f7f304'} size={30} />
+          <Pressable style={({pressed}) => !aiPressed ? ( pressed ? [styles.aiButton, styles.pressed] : styles.aiButton ): [styles.aiButton, styles.pressedAiBtn]} 
+          onPress={fetchAIResponse} disabled={aiPressed}>
+          <View style={styles.aiButtonContainer}>
+              <Text style={!aiPressed ? styles.aiText : [styles.aiText,styles.pressedAiText]}>Get AI suggestions</Text>
+              <MaterialCommunityIcons  name="magic-staff" color={'#fff'} size={30} />
           </View>
                 
           </Pressable>
@@ -275,9 +280,34 @@ pressed: {
     opacity: 0.75
 },
 aiButton: {
+  backgroundColor: '#4A8C72',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2, //android only property
+    shadowColor: '#ffffff', //ios only
+    shadowOffset: {width: 2 ,height: 3},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginHorizontal: '2%',
+    marginTop: '5%'
+},
+pressedAiBtn : {
+  backgroundColor: '#184735',
+},
+aiButtonContainer: {
   flexDirection:'row',
   justifyContent: 'flex-end',
   alignItems: 'center',
-  
+  marginVertical: '2%'
+},
+aiText: {
+  fontWeight: 'bold', 
+  color: '#fff', 
+  fontSize: 16, 
+  textTransform: 'uppercase'
+},
+pressedAiText: {
+  color: '#6e6e6e'
 }
 })

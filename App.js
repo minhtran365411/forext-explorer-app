@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 //get custom fonts
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
@@ -53,6 +54,10 @@ import Paramodo from './components/extramenu/Paramodo';
 import ProductivityTips from './components/extramenu/ProductivityTips';
 import WildFireFacts from './components/extramenu/WildFireFacts';
 import AboutUs from './components/extramenu/AboutUs';
+import SmartGoal from './components/productivitytips/SmartGoal';
+import Matrix from './components/productivitytips/Matrix';
+import BatchBlock from './components/productivitytips/BatchBlock';
+import Procrastination from './components/productivitytips/Procrastination';
 
 const Stack = createNativeStackNavigator();
 
@@ -184,8 +189,33 @@ export class App extends Component {
           <Stack.Screen name="ProductivityTips" component={ProductivityTips} navigation={this.props.navigation} options={{ title: 'Productivity Tips'}} />
           <Stack.Screen name="WildFireFacts" component={WildFireFacts} navigation={this.props.navigation} options={{ title: 'Wild Fire Facts'}}/>
           <Stack.Screen name="AboutUs" component={AboutUs} navigation={this.props.navigation} options={{ title: 'About A Foxes Tale'}}/>
+          <Stack.Screen name="SmartGoal" component={SmartGoal} navigation={this.props.navigation} 
+              options={{ 
+                title: 'SMART Goal',
+                presentation: 'modal'
+              }}
+          />
+          <Stack.Screen name="Matrix" component={Matrix} navigation={this.props.navigation} 
+              options={{ 
+                title: 'Eisenhower Matrix',
+                presentation: 'modal'
+              }}
+          />
+          <Stack.Screen name="BatchBlock" component={BatchBlock} navigation={this.props.navigation} 
+              options={{ 
+                title: 'Batching & Blocking',
+                presentation: 'modal'
+              }}
+          />
+          <Stack.Screen name="Procrastination" component={Procrastination} navigation={this.props.navigation} 
+              options={{ 
+                title: 'Stop Procrastination',
+                presentation: 'modal'
+              }}
+          />
           </Stack.Navigator>
       </NavigationContainer>
+
         
       </Provider>
       
