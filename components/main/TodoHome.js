@@ -255,7 +255,7 @@ function TodoHome (props) {
                 <View style={styles.dailyStreakContainer}>
                     <ExtraMenuItem navigation={props.navigation} link="Paramodo" pageName="Paramodo" />
                     <ExtraMenuItem navigation={props.navigation} link="ProductivityTips" pageName="Productivity Tips" />
-                    <ExtraMenuItem navigation={props.navigation} link="WildFireFacts" pageName="Wild Fire Facts" />
+                    {/* <ExtraMenuItem navigation={props.navigation} link="WildFireFacts" pageName="Wild Fire Facts" /> */}
                     <ExtraMenuItem navigation={props.navigation} link="AboutUs" pageName="About A Foxes Tale" />
                 </View>
               )

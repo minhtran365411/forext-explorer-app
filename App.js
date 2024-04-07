@@ -53,7 +53,7 @@ import ProfileScreen from './components/main/Profile'
 import DetailGoal from './components/goals/DetailGoal';
 import Paramodo from './components/extramenu/Paramodo';
 import ProductivityTips from './components/extramenu/ProductivityTips';
-import WildFireFacts from './components/extramenu/WildFireFacts';
+// import WildFireFacts from './components/extramenu/WildFireFacts';
 import AboutUs from './components/extramenu/AboutUs';
 import SmartGoal from './components/productivitytips/SmartGoal';
 import Matrix from './components/productivitytips/Matrix';
@@ -190,14 +190,14 @@ export class App extends Component {
           options={({navigation}) => ({
              title: 'Set Paramodo Timer',
             headerRight: ({tintColor}) => (
-              <Pressable onPress={() => navigation.navigate('Procrastination')}>
+              <Pressable onPress={() => navigation.navigate('Procrastination')} style={({pressed}) => pressed ? styles.pressed : null}>
                 <FontAwesome6 name="circle-question" size={30} color={tintColor} />
               </Pressable>
             )
           })}
           />
           <Stack.Screen name="ProductivityTips" component={ProductivityTips} navigation={this.props.navigation} options={{ title: 'Productivity Tips'}} />
-          <Stack.Screen name="WildFireFacts" component={WildFireFacts} navigation={this.props.navigation} options={{ title: 'Wild Fire Facts'}}/>
+          {/* <Stack.Screen name="WildFireFacts" component={WildFireFacts} navigation={this.props.navigation} options={{ title: 'Wild Fire Facts'}}/> */}
           <Stack.Screen name="AboutUs" component={AboutUs} navigation={this.props.navigation} options={{ title: 'About A Foxes Tale'}}/>
           <Stack.Screen name="SmartGoal" component={SmartGoal} navigation={this.props.navigation} 
               options={{ 
@@ -245,4 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  pressed: {
+    opacity: 0.7
+  }
 });

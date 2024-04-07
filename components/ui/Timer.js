@@ -2,8 +2,33 @@ import { StyleSheet, Text, View, Pressable } from 'react-native'
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import * as Progress from 'react-native-progress';
 import ParamodoContext from '../../redux/ParamodoContext';
+import { Audio } from 'expo-av';
 
 export default function Timer() {
+
+    //get sound
+    const [sound, setSound] = useState();
+
+    async function playSound() {
+        console.log('Loading Sound');
+        const { sound } = await Audio.Sound.createAsync( require('../../assets/paramodoup.mp3')
+        );
+        setSound(sound);
+    
+        console.log('Playing Sound');
+        await sound.playAsync();
+      }
+    
+      useEffect(() => {
+        return sound
+          ? () => {
+              console.log('Unloading Sound');
+              sound.unloadAsync();
+            }
+          : undefined;
+      }, [sound]);
+    
+
 
     const ParamodoCtx = useContext(ParamodoContext);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -22,6 +47,9 @@ export default function Timer() {
         modeRef.current = nextMode;
         setSecondsLeft(nextSecondsLeft);
         secondsLeftRef.current = nextSecondsLeft;
+
+        //play sound on switch mode
+        playSound();
     }
 
     function tick() {
