@@ -6,7 +6,8 @@ import 'firebase/storage';
 require('firebase/firestore')
 require('firebase/storage')
 import { collection, query, where } from "firebase/firestore";
-import { connect } from 'react-redux'
+import { connect  } from 'react-redux'
+import {clearData} from '../../redux/actions/index'
 
 import ImageModal from '../smallComponents/ImageModel';
 
@@ -98,7 +99,12 @@ function ProfileScreen(props) {
 
   const onLogout = () => {
     //sign out
-    firebase.auth().signOut();
+    firebase.auth().signOut().then(() => {
+      props.signOutRedux();
+
+    }).catch((err) => {
+      console.log(err)
+    });
   }
 
   const deletePost = (postID) => {
@@ -165,13 +171,17 @@ function ProfileScreen(props) {
   )
 }
 
+const mapDispatchToProps = dispatch => ({
+  signOutRedux: () => dispatch(clearData()),
+});
+
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
   posts: store.userState.posts,
   following: store.userState.following
 });
 
-export default connect(mapStateToProps, null)(ProfileScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileScreen);
 
 const styles = StyleSheet.create({
   container: {

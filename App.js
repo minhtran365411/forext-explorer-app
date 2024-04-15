@@ -64,7 +64,7 @@ const Stack = createNativeStackNavigator();
 
 //check if user have seen onboarding screen or not
 const Loading = () => {
-  <View>
+  <View style={{flex: 1}}>
     <ActivityIndicator size={large} />
   </View>
 }

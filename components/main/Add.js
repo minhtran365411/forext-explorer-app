@@ -3,6 +3,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+
 export default function App({navigation}) {
   const [type, setType] = useState(CameraType.back);
   const [camera, setCamera] = useState(null)
@@ -35,7 +37,7 @@ export default function App({navigation}) {
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
@@ -51,11 +53,19 @@ export default function App({navigation}) {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
+
+
   const takePicture = async () => {
     if(camera) {
       const data = await camera.takePictureAsync(null)
-      //console.log(data.uri)
-      setImage(data.uri)
+      //console.log(data)
+      const resizeImg = await manipulateAsync(
+        data.uri,
+        [{ resize: { width: 300, height: 300 } }],
+        { compress: 0.5, format: SaveFormat.JPEG }
+      );
+     console.log(resizeImg)
+      setImage(resizeImg.uri)
     }
   }
 
@@ -64,7 +74,7 @@ export default function App({navigation}) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 1,
+      quality: 0.3,
       aspect: [1,1]
     });
 
@@ -107,7 +117,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    flexDirection: 'row'
+    alignItems: 'center',
+    //flexDirection: 'row'
   },
   camera: {
     flex: 1,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {View, TextInput, Image, Button, StyleSheet, Text} from 'react-native'
 
+
 //import firebase from 'firebase/compat'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -19,12 +20,15 @@ export default function SaveScreen(props) {
     const [caption, setCaption] = useState('')
 
 
+
     const uploadImage = async () => {
         setShowWarningText(true);
         const uri = props.route.params.image;
 
-        const response = await fetch(uri);
+
+        const response = await fetch(uri); //resize here
         const blob = await response.blob();
+        
 
         const storage = getStorage();
         const storageRef = ref(storage, `post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`);

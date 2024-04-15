@@ -25,7 +25,7 @@ export default function AboutUs() {
       <View style={styles.infoBox}>
         <Text style={styles.title}>Visit Us At</Text>
         <Pressable style={({pressed}) => pressed ? [styles.linkBox, styles.pressed] : styles.linkBox} onPress={ ()=>{ Linking.openURL('https://g00365411.wixsite.com/afoxestale')}}>
-            <Text style={styles.link}>https://g00365411.wixsite.com/afoxestale</Text>
+            <Text style={styles.link}>https://afoxestale.wixsite.com/afoxestale</Text>
         </Pressable>
       </View>
 
@@ -34,7 +34,7 @@ export default function AboutUs() {
           We are the team behind A Foxes Tale, a unique blend of gaming and productivity designed to redefine entertainment and personal development.
         </Text>
         <Text style={styles.text}>
-          Our indie game immerses players in an enchanting world while educating them about forest fire dangers. Alongside the game, our Forest Explorer app offers engaging goal-tracking methods and social connectivity.
+          Our indie game immerses players in an enchanting world while educating them about forest fire dangers. Alongside the game, this productivity app offers engaging goal-tracking methods and social connectivity.
         </Text>
         <Text style={styles.text}>
           We're storytellers, educators, and advocates for positive change, committed to creating a platform where entertainment and self-improvement intertwine effortlessly. 

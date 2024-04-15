@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, SafeAreaView, Pressable, TextInput, Alert, TouchableWithoutFeedback, Keyboard  } from 'react-native'
+import { Text, StyleSheet, View, SafeAreaView, Pressable, TextInput, Alert, TouchableWithoutFeedback, Keyboard, Button  } from 'react-native'
 import React from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -20,9 +20,9 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal, userEndDate}) {
         setEndDate(endDate);
       };
     
-    //   const showDatepicker = () => {
-    //     setShow(true);
-    //   };
+      const showDatepicker = () => {
+        setShow(true);
+      };
 
     
     //called only once
@@ -73,9 +73,13 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal, userEndDate}) {
 
         <View style={styles.inputContainer}>
             <Text style={styles.subTitle}>Pick an end date of the goal tracker</Text>
-            {/* <Button onPress={showDatepicker} title="Show date picker!" /> */}
-            
-            {/* {show && ( */}
+            {/* <Button onPress={showDatepicker} title="Show Date Picker!" /> */}
+            <View style={styles.buttonContainer}>
+                <Pressable style={({pressed}) => pressed ? [styles.btnPicker, styles.pressed] : styles.btnPicker} onPress={showDatepicker}>
+                    <Text style={{color: 'white'}}>Show Date Picker!</Text>
+                </Pressable>
+
+                {show && (
                 <DateTimePicker
                 testID="datePicker"
                 value={endDate}
@@ -85,9 +89,13 @@ function AddNewGoal ({onSubmitNewGoal, userNewGoal, userEndDate}) {
                 display='default'
                 minimumDate={tomorrow}
                 />
-            {/* )} */}
+                )} 
 
-            <Text>End Date: {endDate.toLocaleString()}</Text>
+                <Text style={{marginTop: 10}}>End Date: {endDate.toLocaleString()}</Text>
+
+            </View>
+            
+            
 
             
         </View>
@@ -115,7 +123,9 @@ const styles = StyleSheet.create({
         flex: 1
     },
     titleContainer: {
-        margin: '10%',
+        marginHorizontal: '10%',
+        marginTop: '8%',
+        marginBottom: '5%'
     },
     bigTitle: {
         fontFamily: 'TomeOfTheUnknown',
@@ -134,7 +144,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         height: 120,
         padding:30,
-        paddingTop: 50,
+        paddingTop: 20,
         borderRadius: 25,
         fontSize: 15,
         elevation: 2, //android only property
@@ -149,7 +159,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#BA3D1F',
         height: 50,
-        marginTop: 50,
+        marginTop: 20,
         width: '60%',
         borderRadius: 25,
         justifyContent: 'center',
@@ -168,6 +178,20 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.75
+    },
+    btnPicker: {
+        backgroundColor: '#4A8C72',
+        height: 30,
+        marginVertical: 10,
+        width: '60%',
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 1, //android only property
+        shadowColor: '#ffffff', //ios only
+        shadowOffset: {width: 2 ,height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 2
     }
 
 })

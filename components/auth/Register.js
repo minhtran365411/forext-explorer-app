@@ -86,7 +86,7 @@ export class RegisterScreen extends Component {
       <ImageBackground source={require('../../assets/boardingassets/signup_BG.png')} resizeMode="cover" style={{flex: 1}}>
 
         <View style={globalstyle.headerContainer}>
-            <Text style={[globalstyle.brandTitle, {fontFamily: 'TomeOfTheUnknown'}]}>Forest Explorer</Text>
+            <Text style={[globalstyle.brandTitle, {fontFamily: 'TomeOfTheUnknown'}]}>A Foxes Tale</Text>
             <Text style={[globalstyle.headerTitle, {fontFamily: 'Eglantine'}]}>Sign Up</Text>
         </View> 
 

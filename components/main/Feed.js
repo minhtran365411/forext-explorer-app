@@ -51,38 +51,35 @@ function FeedScreen(props) {
     //get following streaks
 
    
+    if (props.following.length > 0) {
+      for (let i = 0; i < props.following.length; i++) {
 
-    for (let i = 0; i < props.following.length; i++) {
+        firebase.firestore().collection("users")
+        .doc(props.following[i])
+        .get().then((doc) => {
+            let temList = friendDailyStreaks;
+            console.log(doc.data())
+            if (temList.length != props.following.length) {
+                temList.push({name: doc.data().name, dailyStreak: doc.data().dailyStreak, email: doc.data().email, lastStampDate: doc.data().lastStampDate})
+            } else {
+                if (temList[i].email == doc.data().email) {
+                  temList[i].dailyStreak = doc.data().dailyStreak
+                } 
+                
+            }
 
-      firebase.firestore().collection("users")
-      .doc(props.following[i])
-      .get().then((doc) => {
-          let temList = friendDailyStreaks;
-          
-          if (temList.length != props.following.length) {
-            temList.push({name: doc.data().name, dailyStreak: doc.data().dailyStreak, email: doc.data().email, lastStampDate: doc.data().lastStampDate})
-          } else {
-              if (temList[i].email == doc.data().email) {
-                temList[i].dailyStreak = doc.data().dailyStreak
-              }
-              
-          }
+            setFriendDailyStreaks(temList);
 
-          
-          
+        }).catch((error) => {
+            console.log("Error in setting friends's daily streaks:", error);
+        });
 
-          setFriendDailyStreaks(temList);
-
-      }).catch((error) => {
-          console.log("Error in setting friends's daily streaks:", error);
-      });
-
+      }
     }
 
-    //console.log(friendDailyStreaks)
 
+  }, [props, friendDailyStreaks, posts]) // this is called here because it is needed to be rerender
 
-  }, [props.usersFollowingLoaded, props.feed, friendDailyStreaks]) // this is called here because it is needed to be rerender
 
 
 
@@ -106,18 +103,21 @@ function FeedScreen(props) {
 
         <View style={styles.dailyStreaks}>
 
+       
         <FlatList 
         horizontal
           data={friendDailyStreaks}
           renderItem={({item}) => <FriendDailyStreakComponent data={item} />}
           keyExtractor={item => item.id}
         />
+
           
         </View>
 
         {/* friend's posts */}
 
       <View style={styles.containerGallery}>
+        {posts.length > 0 ?
         <FlatList 
           numColumns={1}
           horizontal={false}
@@ -125,7 +125,13 @@ function FeedScreen(props) {
           renderItem={({item}) => ( 
           <FriendsPost currentUser={props.currentUser.name} navigation={props.navigation} data={item} postUserName={item.user.name} postUserUid={item.user.uid} />
           )}
+          keyExtractor={item => item.id}
         />
+        : 
+
+        <Text style={styles.warningText}>No posts yet! You can try following other users to see their photos!</Text>
+
+      }
       </View>
 
       </View>
@@ -215,5 +221,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
 
   },
+  warningText: {
+    marginTop: '5%',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginHorizontal: '5%',
+    color: '#4A8C72',
+  }
   
 })

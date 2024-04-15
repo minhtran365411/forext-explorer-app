@@ -140,22 +140,8 @@ function AddNewSubGoal (props) {
       
       <View style={styles.titleContainer}>
           <Text style={styles.bigTitle}>It’s easier to achieve your goal when you turn it into feasible quests.</Text>
-          <Text style={styles.subTitle}>Your goal is: {props.userNewGoal}</Text>
-          <Text style={styles.subTitle}>Duration: {daysInBetween} days</Text>
-
-          <Pressable style={({pressed}) => !aiPressed ? ( pressed ? [styles.aiButton, styles.pressed] : styles.aiButton ): [styles.aiButton, styles.pressedAiBtn]} 
-          onPress={fetchAIResponse} disabled={aiPressed}>
-          <View style={styles.aiButtonContainer}>
-              <Text style={!aiPressed ? styles.aiText : [styles.aiText,styles.pressedAiText]}>Get AI suggestions</Text>
-              <MaterialCommunityIcons  name="magic-staff" color={'#fff'} size={30} />
-          </View>
-                
-          </Pressable>
-
+          <Text style={styles.subTitle}>Your goal is: {props.userNewGoal} | Duration: {daysInBetween} days</Text>
       </View> 
-
-      
-      
 
       <View style={styles.inputContainer}>
           <TextInput 
@@ -181,6 +167,16 @@ function AddNewSubGoal (props) {
               value={subGoal3}
               onChangeText={(value) => setSubGoal3(value)}
           />
+      </View>
+
+      <View style={{marginHorizontal: '5%', marginTop: '1%'}}>
+            <Pressable style={({pressed}) => !aiPressed ? ( pressed ? [styles.aiButton, styles.pressed] : styles.aiButton ): [styles.aiButton, styles.pressedAiBtn]} 
+            onPress={fetchAIResponse} disabled={aiPressed}>
+            <View style={styles.aiButtonContainer}>
+                <Text style={!aiPressed ? styles.aiText : [styles.aiText,styles.pressedAiText]}>Get AI suggestions</Text>
+                <MaterialCommunityIcons  name="magic-staff" color={'#fff'} size={30} />
+            </View>         
+            </Pressable>
       </View>
 
       <View style={styles.buttonsContainer}>
@@ -229,14 +225,15 @@ subTitle: {
     fontSize: 20,
     color: '#823324',
     textAlign: 'center',
-    marginTop: '4%'
+    marginTop: '2%'
 },
 inputContainer: {
     marginHorizontal: 27,
 },
 input: {
     backgroundColor: 'white',
-    padding:20,
+    paddingHorizontal:20,
+    paddingVertical: 12,
     borderRadius: 25,
     fontSize: 15,
     elevation: 2, //android only property
@@ -244,7 +241,7 @@ input: {
     shadowOffset: {width: 2 ,height: 3},
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    marginBottom: '5%'
+    marginBottom: '3%'
 },
 buttonsContainer: {
     alignItems: 'center',

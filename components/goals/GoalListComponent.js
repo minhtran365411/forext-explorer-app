@@ -6,7 +6,12 @@ function GoalListComponent (props) {
 
   var endDate = props.data.userEndDate;
   var lastStampDate = props.data.lastStampDate;
-  let daysLeft = ~~((endDate - lastStampDate) / 86400000);
+  let daysLeft = ((endDate - lastStampDate) / 86400000);
+  if (daysLeft < 0) {
+    daysLeft = 0;
+  } else {
+    daysLeft = ~~daysLeft;
+  }
   
 
     

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "instagramCloneReact",
-    "slug": "instagramCloneReact",
-    "version": "1.0.0",
+    "name": "A Foxes Tale",
+    "slug": "afoxestaleproductivityapp",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,20 +12,31 @@
       "resizeMode": "contain",
       "backgroundColor": "#fff9f0"
     },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
+      "buildNumber": "1.0.1",
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fff9f0"
-      }
+      },
+      "package": "com.afoxestale.afoxestaleproductivity"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7111b7e8-476e-4f33-8170-5a2814f7b609"
+      }
     }
   }
 }

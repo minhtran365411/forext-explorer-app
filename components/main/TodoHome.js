@@ -178,7 +178,7 @@ function TodoHome (props) {
 
             <View>
                <Pressable style={styles.avatarContainer} onPress={() => props.navigation.navigate("Profile", {uid: firebase.auth().currentUser.uid})}>
-                <Image source={require('../../assets/imgs/fox.png')} style={{height: 50, width: 50, borderRadius: 25}}
+                <Image source={require('../../assets/imgs/foxicon.png')} style={{height: 50, width: 50, borderRadius: 25}}
                 resizeMode='cover'
                 />
               </Pressable>
