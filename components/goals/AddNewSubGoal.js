@@ -22,7 +22,7 @@ function AddNewSubGoal (props) {
     //AI
     const [response, setResponse] = useState('')
     const fetchAIResponse = async () => {
-      const apiKey = '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'
+      const apiKey = 'myAPIkey' //this is just for showing project purpose, my API key is not here
       const prompt = `Give me 3 specific sub-goal suggestions for my big goal ${props.userNewGoal} within ${daysInBetween} days in 3 bullet points, each bullet point have a maximum of 10 words`
       
       try {
